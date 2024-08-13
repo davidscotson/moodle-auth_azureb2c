@@ -383,11 +383,11 @@ class authcode extends \auth_azureb2c\loginflow\base {
      *
      * @return false|stdClass Either the matched Moodle user record, or false if not matched.
      */
-    protected function check_for_matched($aadupn) {
+    protected function check_for_matched($entraidupn) {
         global $DB;
         $dbman = $DB->get_manager();
         if ($dbman->table_exists('local_o365_connections')) {
-            $match = $DB->get_record('local_o365_connections', ['aadupn' => $aadupn]);
+            $match = $DB->get_record('local_o365_connections', ['entraidupn' => $entraidupn]);
             if (!empty($match) && \local_o365\utils::is_o365_connected($match->muserid) !== true) {
                 return $DB->get_record('user', ['id' => $match->muserid]);
             }
@@ -480,7 +480,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
             $username = $this->check_objects($azureb2cuniqid, $username);
             $matchedwith = $this->check_for_matched($username);
             if (!empty($matchedwith)) {
-                $matchedwith->aadupn = $username;
+                $matchedwith->entraidupn = $username;
                 throw new \moodle_exception('errorusermatched', 'local_o365', null, $matchedwith);
             }
             $username = trim(\core_text::strtolower($username));
