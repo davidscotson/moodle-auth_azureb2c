@@ -35,7 +35,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
     /**
      * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest(true);
     }
@@ -45,7 +45,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_decode() {
+    public function dataprovider_decode(): array {
         $tests = [];
 
         $tests['emptytest'] = [
@@ -111,7 +111,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
      *
      * @dataProvider dataprovider_decode
      */
-    public function test_decode($encodedjwt, $expectedresult, $expectedexception) {
+    public function test_decode($encodedjwt, $expectedresult, $expectedexception): void {
         if (!empty($expectedexception)) {
             $this->expectException($expectedexception[0]);
             $this->expectExceptionMessage($expectedexception[1]);

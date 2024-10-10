@@ -35,7 +35,7 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
     /**
      * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest(true);
     }
@@ -43,7 +43,7 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
     /**
      * Test getting and setting credentials.
      */
-    public function test_creds_getters_and_setters() {
+    public function test_creds_getters_and_setters(): void {
         $httpclient = new \auth_azureb2c\tests\mockhttpclient();
         $client = new \auth_azureb2c\tests\mockazureb2cclient($httpclient);
 
@@ -68,7 +68,7 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_endpoints() {
+    public function dataprovider_endpoints(): array {
         $tests = [];
 
         $tests['oneinvalid'] = [
@@ -104,7 +104,7 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
      *
      * @dataProvider dataprovider_endpoints
      */
-    public function test_endpoints_getters_and_setters($endpoints, $expectedexception) {
+    public function test_endpoints_getters_and_setters($endpoints, $expectedexception): void {
         if (!empty($expectedexception)) {
             $this->expectException($expectedexception[0]);
             $this->expectExceptionMessage($expectedexception[1]);

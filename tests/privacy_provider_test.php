@@ -39,7 +39,7 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
     /**
      * Tests set up.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -48,7 +48,7 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
     /**
      * Check that a user context is returned if there is any user data for this user.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $user = $this->getDataGenerator()->create_user();
         $this->assertEmpty(provider::get_contexts_for_userid($user->id));
 
@@ -68,7 +68,7 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
     /**
      * Test that only users with a user context are fetched.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest();
 
         $component = 'auth_azureb2c';
@@ -101,7 +101,7 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
     /**
      * Test that user data is exported correctly.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         // Create a user record.
         $user = $this->getDataGenerator()->create_user();
         $tokenrecord = self::create_token($user->id);
@@ -133,7 +133,7 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
     /**
      * Test deleting all user data for a specific context.
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         // Create a user record.
@@ -164,7 +164,7 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
     /**
      * This should work identical to the above test.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         // Create a user record.
@@ -196,7 +196,7 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
     /**
      * Test that data for users in approved userlist is deleted.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $this->resetAfterTest();
 
         $component = 'auth_azureb2c';
