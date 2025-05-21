@@ -36,6 +36,9 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
     /** @var object Plugin config. */
     public $config;
 
+    /** @var classe loginflow. */
+    public $loginflow;
+
     /**
      * Constructor.
      */
