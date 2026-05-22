@@ -411,6 +411,20 @@ class base {
             throw new \moodle_exception('errorauthinvalididtoken', 'auth_azureb2c');
         }
 
+        $exp = $idtoken->claim('exp');
+        $leeway = 60;
+        if (empty($exp) || $exp + $leeway < time()) {
+            \auth_azureb2c\utils::debug('Expired idtoken', 'base::process_idtoken', $idtoken);
+            throw new \moodle_exception('errorauthinvalididtoken', 'auth_azureb2c');
+        }
+
+        $aud = $idtoken->claim('aud');
+        if (empty($aud) || (is_string($aud) && $aud !== $this->config->clientid) ||
+            (is_array($aud) && !in_array($this->config->clientid, $aud))) {
+            \auth_azureb2c\utils::debug('Invalid audience', 'base::process_idtoken', $idtoken);
+            throw new \moodle_exception('errorauthinvalididtoken', 'auth_azureb2c');
+        }
+
         // Use 'oid' if available (Azure-specific), or fall back to standard "sub" claim.
         $azureb2cuniqid = $idtoken->claim('oid');
         if (empty($azureb2cuniqid)) {
