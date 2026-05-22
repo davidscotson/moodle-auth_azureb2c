@@ -1,4 +1,4 @@
-## 2025-05-14 - JWT Validation Hardening
-**Vulnerability:** Missing `exp` (expiry) and `aud` (audience) claim validation in ID tokens, and support for the insecure `none` algorithm in the JWT library.
-**Learning:** OIDC implementations often focus on the authentication result (the `sub` claim) but overlook critical token integrity and lifecycle checks, leaving the application vulnerable to replay attacks and token substitution.
-**Prevention:** Always implement mandatory `exp` and `aud` checks with appropriate leeway for clock drift, and strictly whitelist allowed cryptographic algorithms, ensuring `none` is never permitted.
+## 2025-05-14 - JWT and Unserialize Hardening
+**Vulnerability:** Missing JWT 'exp' and 'aud' validation, insecure 'none' algorithm, and potential object injection via unserialize.
+**Learning:** OIDC plugins must strictly validate tokens and handle serialized data securely to prevent authentication bypass and RCE.
+**Prevention:** Always whitelist algorithms, validate standard claims (exp, aud, iat), and use 'allowed_classes' => false with unserialize.

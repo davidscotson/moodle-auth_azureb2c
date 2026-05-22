@@ -15,8 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Azure AD B2C Connect Authentication Plugin.
- *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,9 +23,6 @@
 
 namespace auth_azureb2c\loginflow;
 
-/**
- * Base class for login flows.
- */
 class base {
     /** @var object Plugin config. */
     public $config;
@@ -35,12 +30,9 @@ class base {
     /** @var \auth_azureb2c\httpclientinterface An HTTP client to use. */
     protected $httpclient;
 
-    /**
-     * Constructor.
-     */
     public function __construct() {
         $default = [
-            'opname' => get_string('pluginname', 'auth_azureb2c'),
+            'opname' => get_string('pluginname', 'auth_azureb2c')
         ];
         $storedconfig = (array)get_config('auth_azureb2c');
         $forcedconfig = [
@@ -83,9 +75,8 @@ class base {
     /**
      * Provides a hook into the login page.
      *
-     * @param object $frm Form object.
-     * @param object $user User object.
-     * @return bool
+     * @param object &$frm Form object.
+     * @param object &$user User object.
      */
     public function loginpage_hook(&$frm, &$user) {
         return true;
@@ -175,14 +166,13 @@ class base {
         $country = $idtoken->claim('country');
         if (!empty($country)) {
             $countries = get_string_manager()->get_list_of_countries();
-            foreach ($countries as $countrykey => $countryvalue) {
+            foreach ($countries as  $countrykey => $countryvalue) {
                 $countryb2c = $country;
                 $countrymoodle = $countryvalue;
-                if ($countrymoodle == $countryb2c) {
+                if($countrymoodle == $countryb2c)
                     $countryval = $countrykey;
-                }
             }
-        }
+    }
 
         $gender = $idtoken->claim('extension_WP_Gender');
         $userinfo['lastnamephonetic'] = $gender;
@@ -200,7 +190,7 @@ class base {
     /**
      * Set an HTTP client to use.
      *
-     * @param \auth_azureb2c\httpclientinterface $httpclient An HTTP client to use.
+     * @param auth_azureb2chttpclientinterface $httpclient [description]
      */
     public function set_httpclient(\auth_azureb2c\httpclientinterface $httpclient) {
         $this->httpclient = $httpclient;
@@ -214,8 +204,6 @@ class base {
      *                                "linked" account.
      * @param \moodle_url $redirect Where to redirect if successful.
      * @param \moodle_url $selfurl The page this is accessed from. Used for some redirects.
-     * @param int|null $userid The ID of the user to disconnect.
-     * @return void
      */
     public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
                                \moodle_url $selfurl = null, $userid = null) {
@@ -246,7 +234,7 @@ class base {
             redirect($redirect);
         } else {
             global $OUTPUT, $PAGE;
-            require_once($CFG->dirroot . '/user/lib.php');
+            require_once($CFG->dirroot.'/user/lib.php');
             $PAGE->set_url($selfurl->out());
             $PAGE->set_context(\context_system::instance());
             $PAGE->set_pagelayout('standard');
@@ -294,7 +282,7 @@ class base {
                     throw new \moodle_exception('errorauthdisconnectinvalidmethod', 'auth_azureb2c');
                 }
 
-                $updateduser = new \stdClass();
+                $updateduser = new \stdClass;
 
                 if ($fromform->newmethod === 'manual') {
                     if (empty($fromform->password)) {
@@ -321,7 +309,7 @@ class base {
                     $updateduser->auth = $prevauthmethod;
                     // We can't use user_update_user as it will rehash the value.
                     if (!empty($prevmethodrec->password)) {
-                        $manualuserupdate = new \stdClass();
+                        $manualuserupdate = new \stdClass;
                         $manualuserupdate->id = $userrec->id;
                         $manualuserupdate->password = $prevmethodrec->password;
                         $DB->update_record('user', $manualuserupdate);
@@ -471,7 +459,7 @@ class base {
                     $hasrestrictions = true;
                     ob_start();
                     try {
-                        $count = @preg_match('/' . $restriction . '/', $tomatch, $matches);
+                        $count = @preg_match('/'.$restriction.'/', $tomatch, $matches);
                         if (!empty($count)) {
                             $userpassed = true;
                             break;
@@ -505,11 +493,10 @@ class base {
      * Create a token for a user, thus linking a Moodle user to an Azure AD B2C Connect user.
      *
      * @param string $azureb2cuniqid A unique identifier for the user.
-     * @param string $username The username of the Moodle user to link to.
+     * @param array $username The username of the Moodle user to link to.
      * @param array $authparams Parameters receieved from the auth request.
      * @param array $tokenparams Parameters received from the token request.
      * @param \auth_azureb2c\jwt $idtoken A JWT object representing the received id_token.
-     * @param int $userid The ID of the Moodle user.
      * @return \stdClass The created token database record.
      */
     protected function createtoken($azureb2cuniqid, $username, $authparams, $tokenparams, \auth_azureb2c\jwt $idtoken, $userid = 0) {
@@ -526,7 +513,7 @@ class base {
             throw new \moodle_exception('errorauthinvalididtoken', 'auth_azureb2c');
         }
 
-        $tokenrec = new \stdClass();
+        $tokenrec = new \stdClass;
         $tokenrec->azureb2cuniqid = $azureb2cuniqid;
         $tokenrec->username = $username;
         $tokenrec->userid = $userid;
@@ -562,7 +549,7 @@ class base {
      */
     protected function updatetoken($tokenid, $authparams, $tokenparams) {
         global $DB;
-        $tokenrec = new \stdClass();
+        $tokenrec = new \stdClass;
         $tokenrec->id = $tokenid;
         $tokenrec->authcode = $authparams['code'];
         $tokenrec->token = null;
