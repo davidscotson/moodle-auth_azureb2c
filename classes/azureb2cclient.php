@@ -128,7 +128,7 @@ class azureb2cclient {
      * @return array Array of request parameters.
      */
     protected function getauthrequestparams($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
-        $nonce = 'N'.uniqid(); 
+        $nonce = 'N'.uniqid();
         $lang = current_language();
         $params = [
             'scope' => get_config('auth_azureb2c', 'scope'),// Get the custom scope from settings
@@ -149,7 +149,7 @@ class azureb2cclient {
         if (!empty($domainhint)) {
             $params['domain_hint'] = $domainhint;
         }
-        
+
         $params = array_merge($params, $extraparams);
         return $params;
     }
@@ -241,7 +241,7 @@ class azureb2cclient {
             throw new \moodle_exception('errorazureb2cclientnotokenendpoint', 'auth_azureb2c');
         }
 
-        
+
         $params = [
             'scope' => get_config('auth_azureb2c', 'scope'),
             'client_id' => $this->clientid,

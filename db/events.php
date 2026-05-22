@@ -21,6 +21,8 @@
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $observers = [
     [
         'eventname' => '\core\event\user_deleted',

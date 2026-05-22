@@ -68,7 +68,7 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_endpoints(): array {
+    public static function dataprovider_endpoints(): array {
         $tests = [];
 
         $tests['oneinvalid'] = [
