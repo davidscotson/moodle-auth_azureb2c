@@ -12,19 +12,24 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  See the LICENSE file.
 
 /**
- * @package auth_azureb2c
- * @author Gopal Sharma <gopalsharma66@gmail.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
+ * Azure AD B2C Connect Client.
+ *
+ * @package    auth_azureb2c
+ * @copyright  2020 Gopal Sharma <gopalsharma66@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace auth_azureb2c;
 
+use stdClass;
+use moodle_exception;
+use moodle_url;
+
 /**
- * Azure AD B2C Connect Client
+ * Azure AD B2C Connect Client class.
  */
 class azureb2cclient {
     /** @var \auth_azureb2c\httpclientinterface An HTTP client to use. */
@@ -38,6 +43,9 @@ class azureb2cclient {
 
     /** @var string The client redirect URI. */
     protected $redirecturi;
+
+    /** @var string The resource. */
+    protected $resource;
 
     /** @var array Array of endpoints. */
     protected $endpoints = [];
@@ -57,6 +65,7 @@ class azureb2cclient {
      * @param string $id The registered client ID.
      * @param string $secret The registered client secret.
      * @param string $redirecturi The registered client redirect URI.
+     * @param string $resource The resource.
      */
     public function setcreds($id, $secret, $redirecturi, $resource) {
         $this->clientid = $id;
@@ -68,7 +77,7 @@ class azureb2cclient {
     /**
      * Get the set client ID.
      *
-     * @return string The set client ID.
+     * @return string|null The set client ID.
      */
     public function get_clientid() {
         return (isset($this->clientid)) ? $this->clientid : null;
@@ -77,7 +86,7 @@ class azureb2cclient {
     /**
      * Get the set client secret.
      *
-     * @return string The set client secret.
+     * @return string|null The set client secret.
      */
     public function get_clientsecret() {
         return (isset($this->clientsecret)) ? $this->clientsecret : null;
@@ -86,7 +95,7 @@ class azureb2cclient {
     /**
      * Get the set redirect URI.
      *
-     * @return string The set redirect URI.
+     * @return string|null The set redirect URI.
      */
     public function get_redirecturi() {
         return (isset($this->redirecturi)) ? $this->redirecturi : null;
@@ -95,7 +104,7 @@ class azureb2cclient {
     /**
      * Get the set resource.
      *
-     * @return string The set resource.
+     * @return string|null The set resource.
      */
     public function get_resource() {
         return (isset($this->resource)) ? $this->resource : null;
@@ -105,16 +114,23 @@ class azureb2cclient {
      * Set azureb2c endpoints.
      *
      * @param array $endpoints Array of endpoints. Can have keys 'auth', and 'token'.
+     * @throws moodle_exception
      */
     public function setendpoints($endpoints) {
         foreach ($endpoints as $type => $uri) {
             if (clean_param($uri, PARAM_URL) !== $uri) {
-                throw new \moodle_exception('errorazureb2cclientinvalidendpoint', 'auth_azureb2c');
+                throw new moodle_exception('errorazureb2cclientinvalidendpoint', 'auth_azureb2c');
             }
             $this->endpoints[$type] = $uri;
         }
     }
 
+    /**
+     * Get an endpoint.
+     *
+     * @param string $endpoint The endpoint name.
+     * @return string|null The endpoint URI.
+     */
     public function get_endpoint($endpoint) {
         return (isset($this->endpoints[$endpoint])) ? $this->endpoints[$endpoint] : null;
     }
@@ -127,11 +143,11 @@ class azureb2cclient {
      * @param array $extraparams Additional parameters to send with the azureb2c request.
      * @return array Array of request parameters.
      */
-    protected function getauthrequestparams($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
-        $nonce = 'N'.uniqid(); 
+    protected function getauthrequestparams($promptlogin = false, array $stateparams = [], array $extraparams = []) {
+        $nonce = 'N' . uniqid();
         $lang = current_language();
         $params = [
-            'scope' => get_config('auth_azureb2c', 'scope'),// Get the custom scope from settings
+            'scope' => get_config('auth_azureb2c', 'scope'), // Get the custom scope from settings
             'client_id' => $this->clientid,
             'nonce' =>  $nonce,
             'response_mode' => 'form_post',
@@ -139,7 +155,7 @@ class azureb2cclient {
             'response_type' => 'code',
             'state' => $this->getnewstate($nonce, $stateparams),
             'redirect_uri' => $this->redirecturi,
-            'ui_locales' => $lang
+            'ui_locales' => $lang,
         ];
         if ($promptlogin === true) {
             $params['prompt'] = 'login';
@@ -149,7 +165,7 @@ class azureb2cclient {
         if (!empty($domainhint)) {
             $params['domain_hint'] = $domainhint;
         }
-        
+
         $params = array_merge($params, $extraparams);
         return $params;
     }
@@ -158,11 +174,12 @@ class azureb2cclient {
      * Generate a new state parameter.
      *
      * @param string $nonce The generated nonce value.
+     * @param array $stateparams Additional state parameters.
      * @return string The new state value.
      */
-    protected function getnewstate($nonce, array $stateparams = array()) {
+    protected function getnewstate($nonce, array $stateparams = []) {
         global $DB;
-        $staterec = new \stdClass;
+        $staterec = new stdClass();
         $staterec->sesskey = sesskey();
         $staterec->state = random_string(15);
         $staterec->nonce = $nonce;
@@ -178,19 +195,19 @@ class azureb2cclient {
      * @param bool $promptlogin Whether to prompt for login or use existing session.
      * @param array $stateparams Parameters to store as state.
      * @param array $extraparams Additional parameters to send with the azureb2c request.
+     * @throws moodle_exception
      */
-    public function authrequest($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
-        global $DB;
+    public function authrequest($promptlogin = false, array $stateparams = [], array $extraparams = []) {
         if (empty($this->clientid)) {
-            throw new \moodle_exception('errorazureb2cclientnocreds', 'auth_azureb2c');
+            throw new moodle_exception('errorazureb2cclientnocreds', 'auth_azureb2c');
         }
 
         if (empty($this->endpoints['auth'])) {
-            throw new \moodle_exception('errorazureb2cclientnoauthendpoint', 'auth_azureb2c');
+            throw new moodle_exception('errorazureb2cclientnoauthendpoint', 'auth_azureb2c');
         }
 
         $params = $this->getauthrequestparams($promptlogin, $stateparams, $extraparams);
-        $redirecturl = new \moodle_url($this->endpoints['auth'], $params);
+        $redirecturl = new moodle_url($this->endpoints['auth'], $params);
         redirect($redirecturl);
     }
 
@@ -199,15 +216,16 @@ class azureb2cclient {
      *
      * @param string $username The resource owner's username.
      * @param string $password The resource owner's password.
-     * @return array Received parameters.
+     * @return array|false Received parameters.
+     * @throws moodle_exception
      */
     public function rocredsrequest($username, $password) {
         if (empty($this->endpoints['token'])) {
-            throw new \moodle_exception('errorazureb2cclientnotokenendpoint', 'auth_azureb2c');
+            throw new moodle_exception('errorazureb2cclientnotokenendpoint', 'auth_azureb2c');
         }
 
         if (strpos($this->endpoints['token'], 'https://') !== 0) {
-            throw new \moodle_exception('errorazureb2cclientinsecuretokenendpoint', 'auth_azureb2c');
+            throw new moodle_exception('errorazureb2cclientinsecuretokenendpoint', 'auth_azureb2c');
         }
 
         $params = [
@@ -217,14 +235,14 @@ class azureb2cclient {
             'password' => $password,
             'resource' => $this->resource,
             'client_id' => $this->clientid,
-            'client_secret' => $this->clientsecret
+            'client_secret' => $this->clientsecret,
         ];
 
         try {
             $returned = $this->httpclient->post($this->endpoints['token'], $params);
-            return \auth_azureb2c\utils::process_json_response($returned, ['token_type' => null, 'id_token' => null]);
+            return utils::process_json_response($returned, ['token_type' => null, 'id_token' => null]);
         } catch (\Exception $e) {
-            \auth_azureb2c\utils::debug('Error in rocredsrequest request', 'azureb2cclient::rocredsrequest', $e->getMessage());
+            utils::debug('Error in rocredsrequest request', 'azureb2cclient::rocredsrequest', $e->getMessage());
             return false;
         }
     }
@@ -232,17 +250,17 @@ class azureb2cclient {
     /**
      * Exchange an authorization code for an access token.
      *
-     * @param string $tokenendpoint The token endpoint URI.
      * @param string $code An authorization code.
      * @return array Received parameters.
+     * @throws moodle_exception
      */
     public function tokenrequest($code) {
         if (empty($this->endpoints['token'])) {
-            throw new \moodle_exception('errorazureb2cclientnotokenendpoint', 'auth_azureb2c');
+            throw new moodle_exception('errorazureb2cclientnotokenendpoint', 'auth_azureb2c');
         }
 
         if (strpos($this->endpoints['token'], 'https://') !== 0) {
-            throw new \moodle_exception('errorazureb2cclientinsecuretokenendpoint', 'auth_azureb2c');
+            throw new moodle_exception('errorazureb2cclientinsecuretokenendpoint', 'auth_azureb2c');
         }
 
         $params = [
@@ -251,11 +269,11 @@ class azureb2cclient {
             'client_secret' => $this->clientsecret,
             'grant_type' => 'authorization_code',
             'code' => $code,
-            'redirect_uri' => $this->redirecturi
+            'redirect_uri' => $this->redirecturi,
         ];
 
         $returned = $this->httpclient->post($this->endpoints['token'], $params);
 
-        return \auth_azureb2c\utils::process_json_response($returned, ['id_token' => null]);
+        return utils::process_json_response($returned, ['id_token' => null]);
     }
 }

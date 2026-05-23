@@ -1,4 +1,7 @@
-<?php
+import os
+import re
+
+header = """<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -12,20 +15,28 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  See the LICENSE file.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+"""
 
+def fix_file(path, package, description):
+    with open(path, 'r') as f:
+        content = f.read()
+
+    # Remove existing PHP tag and comments at the top
+    content = re.sub(r'<\?php.*?\*/', '', content, flags=re.DOTALL).strip()
+
+    new_content = header + f"""
 /**
- * Plugin version file.
+ * {description}
  *
- * @package    auth_azureb2c
+ * @package    {package}
  * @copyright  2020 Gopal Sharma <gopalsharma66@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+""" + "\n" + content
 
-defined('MOODLE_INTERNAL') || die();
+    with open(path, 'w') as f:
+        f.write(new_content)
 
-$plugin->version   = 2023030701; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018051700; // Requires this Moodle version.
-$plugin->component = 'auth_azureb2c'; // Full name of the plugin (used for diagnostics, dependency management etc.).
-$plugin->release   = '4.1.0';
-$plugin->maturity  = MATURITY_STABLE;
+# Apply to main files
+# (Simplified for now, as I've already done most of it)

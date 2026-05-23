@@ -12,17 +12,25 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  See the LICENSE file.
 
 /**
- * @package auth_azureb2c
- * @author Gopal Sharma <gopalsharma66@gmail.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
+ * Base login flow.
+ *
+ * @package    auth_azureb2c
+ * @copyright  2020 Gopal Sharma <gopalsharma66@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace auth_azureb2c\loginflow;
 
+use stdClass;
+use moodle_url;
+use moodle_exception;
+
+/**
+ * Base login flow class.
+ */
 class base {
     /** @var object Plugin config. */
     public $config;
@@ -30,9 +38,12 @@ class base {
     /** @var \auth_azureb2c\httpclientinterface An HTTP client to use. */
     protected $httpclient;
 
+    /**
+     * Constructor.
+     */
     public function __construct() {
         $default = [
-            'opname' => get_string('pluginname', 'auth_azureb2c')
+            'opname' => get_string('pluginname', 'auth_azureb2c'),
         ];
         $storedconfig = (array)get_config('auth_azureb2c');
         $forcedconfig = [
@@ -65,7 +76,7 @@ class base {
      * This is the primary method that is used by the authenticate_user_login() function in moodlelib.php.
      *
      * @param string $username The username (with system magic quotes)
-     * @param string $password The password (with system magic quotes)
+     * @param string|null $password The password (with system magic quotes)
      * @return bool Authentication success or failure.
      */
     public function user_login($username, $password = null) {
@@ -75,8 +86,9 @@ class base {
     /**
      * Provides a hook into the login page.
      *
-     * @param object &$frm Form object.
-     * @param object &$user User object.
+     * @param object $frm Form object.
+     * @param object $user User object.
+     * @return bool
      */
     public function loginpage_hook(&$frm, &$user) {
         return true;
@@ -150,7 +162,6 @@ class base {
         $email = $idtoken->claim('emails');
         if (!empty($email)) {
              $userinfo['email'] = $email[0];
-             //$userinfo['email'] = $email;
         }
 
         if (empty($userinfo['email'])) {
@@ -162,17 +173,16 @@ class base {
                 }
             }
         }
-        
+
         $country = $idtoken->claim('country');
         if (!empty($country)) {
             $countries = get_string_manager()->get_list_of_countries();
-            foreach ($countries as  $countrykey => $countryvalue) {
-                $countryb2c = $country;
-                $countrymoodle = $countryvalue;
-                if($countrymoodle == $countryb2c)
-                    $countryval = $countrykey;
+            foreach ($countries as $countrykey => $countryvalue) {
+                if ($countryvalue == $country) {
+                    $userinfo['country'] = $countrykey;
+                }
             }
-    }
+        }
 
         $gender = $idtoken->claim('extension_WP_Gender');
         $userinfo['lastnamephonetic'] = $gender;
@@ -190,7 +200,7 @@ class base {
     /**
      * Set an HTTP client to use.
      *
-     * @param auth_azureb2chttpclientinterface $httpclient [description]
+     * @param \auth_azureb2c\httpclientinterface $httpclient The HTTP client.
      */
     public function set_httpclient(\auth_azureb2c\httpclientinterface $httpclient) {
         $this->httpclient = $httpclient;
@@ -200,19 +210,21 @@ class base {
      * Handle azureb2c disconnection from Moodle account.
      *
      * @param bool $justremovetokens If true, just remove the stored azureb2c tokens for the user, otherwise revert login methods.
-     * @param bool $donotremovetokens If true, do not remove tokens when disconnecting. This migrates from a login account to a
-     *                                "linked" account.
-     * @param \moodle_url $redirect Where to redirect if successful.
-     * @param \moodle_url $selfurl The page this is accessed from. Used for some redirects.
+     * @param bool $donotremovetokens If true, do not remove tokens when disconnecting.
+     * @param moodle_url|null $redirect Where to redirect if successful.
+     * @param moodle_url|null $selfurl The page this is accessed from.
+     * @param int|null $userid The user ID.
+     * @return void
+     * @throws moodle_exception
      */
-    public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
-                               \moodle_url $selfurl = null, $userid = null) {
+    public function disconnect($justremovetokens = false, $donotremovetokens = false, moodle_url $redirect = null,
+                               moodle_url $selfurl = null, $userid = null) {
         global $USER, $DB, $CFG;
         if ($redirect === null) {
-            $redirect = new \moodle_url('/auth/azureb2c/ucp.php');
+            $redirect = new moodle_url('/auth/azureb2c/ucp.php');
         }
         if ($selfurl === null) {
-            $selfurl = new \moodle_url('/auth/azureb2c/ucp.php', ['action' => 'disconnectlogin']);
+            $selfurl = new moodle_url('/auth/azureb2c/ucp.php', ['action' => 'disconnectlogin']);
         }
 
         // Get the record of the user involved. Current user if no ID received.
@@ -234,7 +246,7 @@ class base {
             redirect($redirect);
         } else {
             global $OUTPUT, $PAGE;
-            require_once($CFG->dirroot.'/user/lib.php');
+            require_once($CFG->dirroot . '/user/lib.php');
             $PAGE->set_url($selfurl->out());
             $PAGE->set_context(\context_system::instance());
             $PAGE->set_pagelayout('standard');
@@ -254,12 +266,10 @@ class base {
 
             // We need either the user's previous method or the manual login plugin to be enabled for disconnection.
             if (empty($prevauthmethod) && is_enabled_auth('manual') !== true) {
-                throw new \moodle_exception('errornodisconnectionauthmethod', 'auth_azureb2c');
+                throw new moodle_exception('errornodisconnectionauthmethod', 'auth_azureb2c');
             }
 
             // Check to see if the user has a username created by azureb2c, or a self-created username.
-            // azureb2c-created usernames are usually very verbose, so we'll allow them to choose a sensible one.
-            // Otherwise, keep their existing username.
             $azureb2ctoken = $DB->get_record('auth_azureb2c_token', ['userid' => $userrec->id]);
             $ccun = (isset($azureb2ctoken->azureb2cuniqid) && strtolower($azureb2ctoken->azureb2cuniqid) === $userrec->username) ? true : false;
             $customdata = [
@@ -276,21 +286,19 @@ class base {
                 redirect($redirect);
             } else if ($fromform = $mform->get_data()) {
 
-                $origusername = $userrec->username;
-
                 if (empty($fromform->newmethod) || ($fromform->newmethod !== $prevauthmethod && $fromform->newmethod !== 'manual')) {
-                    throw new \moodle_exception('errorauthdisconnectinvalidmethod', 'auth_azureb2c');
+                    throw new moodle_exception('errorauthdisconnectinvalidmethod', 'auth_azureb2c');
                 }
 
-                $updateduser = new \stdClass;
+                $updateduser = new stdClass();
 
                 if ($fromform->newmethod === 'manual') {
                     if (empty($fromform->password)) {
-                        throw new \moodle_exception('errorauthdisconnectemptypassword', 'auth_azureb2c');
+                        throw new moodle_exception('errorauthdisconnectemptypassword', 'auth_azureb2c');
                     }
                     if ($customdata['canchooseusername'] === true) {
                         if (empty($fromform->username)) {
-                            throw new \moodle_exception('errorauthdisconnectemptyusername', 'auth_azureb2c');
+                            throw new moodle_exception('errorauthdisconnectemptyusername', 'auth_azureb2c');
                         }
 
                         if (strtolower($fromform->username) !== $userrec->username) {
@@ -299,7 +307,7 @@ class base {
                             if ($DB->record_exists('user', $usercheck) === false) {
                                 $updateduser->username = $newusername;
                             } else {
-                                throw new \moodle_exception('errorauthdisconnectusernameexists', 'auth_azureb2c');
+                                throw new moodle_exception('errorauthdisconnectusernameexists', 'auth_azureb2c');
                             }
                         }
                     }
@@ -309,7 +317,7 @@ class base {
                     $updateduser->auth = $prevauthmethod;
                     // We can't use user_update_user as it will rehash the value.
                     if (!empty($prevmethodrec->password)) {
-                        $manualuserupdate = new \stdClass;
+                        $manualuserupdate = new stdClass();
                         $manualuserupdate->id = $userrec->id;
                         $manualuserupdate->password = $prevmethodrec->password;
                         $DB->update_record('user', $manualuserupdate);
@@ -321,7 +329,7 @@ class base {
                 try {
                     user_update_user($updateduser);
                 } catch (\Exception $e) {
-                    throw new \moodle_exception($e->errorcode, '', $selfurl);
+                    throw new moodle_exception($e->errorcode, '', $selfurl);
                 }
 
                 // Delete token data.
@@ -357,13 +365,13 @@ class base {
      * @return mixed Determined by loginflow.
      */
     public function handleredirect() {
-
     }
 
     /**
      * Construct the Azure AD B2C Connect client.
      *
      * @return \auth_azureb2c\azureb2cclient The constructed client.
+     * @throws moodle_exception
      */
     protected function get_azureb2cclient() {
         global $CFG;
@@ -371,10 +379,10 @@ class base {
             $this->httpclient = new \auth_azureb2c\httpclient();
         }
         if (empty($this->config->clientid) || empty($this->config->clientsecret)) {
-            throw new \moodle_exception('errorauthnocreds', 'auth_azureb2c');
+            throw new moodle_exception('errorauthnocreds', 'auth_azureb2c');
         }
         if (empty($this->config->authendpoint) || empty($this->config->tokenendpoint)) {
-            throw new \moodle_exception('errorauthnoendpoints', 'auth_azureb2c');
+            throw new moodle_exception('errorauthnoendpoints', 'auth_azureb2c');
         }
 
         $clientid = (isset($this->config->clientid)) ? $this->config->clientid : null;
@@ -396,6 +404,7 @@ class base {
      * @param string $idtoken Encoded id token.
      * @param string $orignonce Original nonce to validate received nonce against.
      * @return array List of azureb2cuniqid and constructed idtoken jwt.
+     * @throws moodle_exception
      */
     protected function process_idtoken($idtoken, $orignonce = '') {
         // Decode and verify idtoken.
@@ -403,12 +412,12 @@ class base {
         $sub = $idtoken->claim('sub');
         if (empty($sub)) {
             \auth_azureb2c\utils::debug('Invalid idtoken', 'base::process_idtoken', $idtoken);
-            throw new \moodle_exception('errorauthinvalididtoken', 'auth_azureb2c');
+            throw new moodle_exception('errorauthinvalididtoken', 'auth_azureb2c');
         }
         $receivednonce = $idtoken->claim('nonce');
         if (!empty($orignonce) && (empty($receivednonce) || $receivednonce !== $orignonce)) {
             \auth_azureb2c\utils::debug('Invalid nonce', 'base::process_idtoken', $idtoken);
-            throw new \moodle_exception('errorauthinvalididtoken', 'auth_azureb2c');
+            throw new moodle_exception('errorauthinvalididtoken', 'auth_azureb2c');
         }
 
         // Use 'oid' if available (Azure-specific), or fall back to standard "sub" claim.
@@ -422,9 +431,6 @@ class base {
     /**
      * Check user restrictions, if present.
      *
-     * This check will return false if there are restrictions in place that the user did not meet, otherwise it will return
-     * true. If there are no restrictions in place, this will return true.
-     *
      * @param \auth_azureb2c\jwt $idtoken The ID token of the user who is trying to log in.
      * @return bool Whether the restriction check passed.
      */
@@ -434,7 +440,6 @@ class base {
         $userpassed = false;
         if ($restrictions !== '') {
             $restrictions = explode("\n", $restrictions);
-            // Match "UPN" (Azure-specific) if available, otherwise match azureb2c-standard "sub".
             $tomatch = $idtoken->claim('upn');
             if (empty($tomatch)) {
                 $tomatch = $idtoken->claim('sub');
@@ -445,29 +450,15 @@ class base {
                     $hasrestrictions = true;
                     ob_start();
                     try {
-                        $count = @preg_match('/'.$restriction.'/', $tomatch, $matches);
+                        $count = @preg_match('/' . $restriction . '/', $tomatch, $matches);
                         if (!empty($count)) {
                             $userpassed = true;
                             break;
                         }
                     } catch (\Exception $e) {
-                        $debugdata = [
-                            'exception' => $e,
-                            'restriction' => $restriction,
-                            'tomatch' => $tomatch,
-                        ];
-                        \auth_azureb2c\utils::debug('Error running user restrictions.', 'handleauthresponse', $debugdata);
+                        \auth_azureb2c\utils::debug('Error running user restrictions.', 'handleauthresponse', $e);
                     }
-                    $contents = ob_get_contents();
                     ob_end_clean();
-                    if (!empty($contents)) {
-                        $debugdata = [
-                            'contents' => $contents,
-                            'restriction' => $restriction,
-                            'tomatch' => $tomatch,
-                        ];
-                        \auth_azureb2c\utils::debug('Output while running user restrictions.', 'handleauthresponse', $debugdata);
-                    }
                 }
             }
         }
@@ -476,30 +467,30 @@ class base {
 
 
     /**
-     * Create a token for a user, thus linking a Moodle user to an Azure AD B2C Connect user.
+     * Create a token for a user.
      *
      * @param string $azureb2cuniqid A unique identifier for the user.
-     * @param array $username The username of the Moodle user to link to.
+     * @param string $username The username of the Moodle user to link to.
      * @param array $authparams Parameters receieved from the auth request.
      * @param array $tokenparams Parameters received from the token request.
-     * @param \auth_azureb2c\jwt $idtoken A JWT object representing the received id_token.
-     * @return \stdClass The created token database record.
+     * @param \auth_azureb2c\jwt $idtoken A JWT object.
+     * @param int $userid User ID.
+     * @return stdClass The created token database record.
+     * @throws moodle_exception
      */
     protected function createtoken($azureb2cuniqid, $username, $authparams, $tokenparams, \auth_azureb2c\jwt $idtoken, $userid = 0) {
         global $DB;
 
-        // Determine remote username. Use 'upn' if available (Azure-specific), or fall back to standard 'sub'.
         $azureb2cusername = $idtoken->claim('upn');
         if (empty($azureb2cusername)) {
             $azureb2cusername = $idtoken->claim('sub');
         }
 
-        // We should not fail here (idtoken was verified earlier to at least contain 'sub', but just in case...).
         if (empty($azureb2cusername)) {
-            throw new \moodle_exception('errorauthinvalididtoken', 'auth_azureb2c');
+            throw new moodle_exception('errorauthinvalididtoken', 'auth_azureb2c');
         }
 
-        $tokenrec = new \stdClass;
+        $tokenrec = new stdClass();
         $tokenrec->azureb2cuniqid = $azureb2cuniqid;
         $tokenrec->username = $username;
         $tokenrec->userid = $userid;
@@ -520,7 +511,7 @@ class base {
         } else {
             $tokenrec->expiry = time() + DAYSECS;
         }
-        $tokenrec->refreshtoken = !empty($tokenparams['refresh_token']) ? $tokenparams['refresh_token'] : ''; // TBD?
+        $tokenrec->refreshtoken = !empty($tokenparams['refresh_token']) ? $tokenparams['refresh_token'] : '';
         $tokenrec->idtoken = $tokenparams['id_token'];
         $tokenrec->id = $DB->insert_record('auth_azureb2c_token', $tokenrec);
         return $tokenrec;
@@ -535,7 +526,7 @@ class base {
      */
     protected function updatetoken($tokenid, $authparams, $tokenparams) {
         global $DB;
-        $tokenrec = new \stdClass;
+        $tokenrec = new stdClass();
         $tokenrec->id = $tokenid;
         $tokenrec->authcode = $authparams['code'];
         $tokenrec->token = null;
@@ -551,7 +542,7 @@ class base {
         } else {
             $tokenrec->expiry = time() + DAYSECS;
         }
-        $tokenrec->refreshtoken = !empty($tokenparams['refresh_token']) ? $tokenparams['refresh_token'] : ''; // TBD?
+        $tokenrec->refreshtoken = !empty($tokenparams['refresh_token']) ? $tokenparams['refresh_token'] : '';
         $tokenrec->idtoken = $tokenparams['id_token'];
         $DB->update_record('auth_azureb2c_token', $tokenrec);
     }

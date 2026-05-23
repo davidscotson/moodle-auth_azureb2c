@@ -12,9 +12,11 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  See the LICENSE file.
 
 /**
+ * JWT handling class.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -97,7 +99,7 @@ class jwt {
      */
     public static function instance_from_encoded($encoded) {
         list($header, $body) = static::decode($encoded);
-        $jwt = new static;
+        $jwt = new static();
         $jwt->set_header($header);
         $jwt->set_claims($body);
         return $jwt;
@@ -115,8 +117,7 @@ class jwt {
     /**
      * Set claims in the object.
      *
-     * @param array $params An array of claims to set. This will be appended to existing claims. Claims with the same keys will be
-     *                      overwritten.
+     * @param array $params An array of claims to set. This will be appended to existing claims.
      */
     public function set_claims(array $params) {
         $this->claims = array_merge($this->claims, $params);
