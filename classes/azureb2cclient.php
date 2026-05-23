@@ -167,7 +167,7 @@ class azureb2cclient {
         $staterec->state = random_string(15);
         $staterec->nonce = $nonce;
         $staterec->timecreated = time();
-        $staterec->additionaldata = serialize($stateparams);
+        $staterec->additionaldata = json_encode($stateparams);
         $DB->insert_record('auth_azureb2c_state', $staterec);
         return $staterec->state;
     }
@@ -241,7 +241,10 @@ class azureb2cclient {
             throw new \moodle_exception('errorazureb2cclientnotokenendpoint', 'auth_azureb2c');
         }
 
-        
+        if (strpos($this->endpoints['token'], 'https://') !== 0) {
+            throw new \moodle_exception('errorazureb2cclientinsecuretokenendpoint', 'auth_azureb2c');
+        }
+
         $params = [
             'scope' => get_config('auth_azureb2c', 'scope'),
             'client_id' => $this->clientid,
