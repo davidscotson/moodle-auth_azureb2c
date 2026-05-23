@@ -12,13 +12,14 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  See the LICENSE file.
 
 /**
- * @package auth_azureb2c
- * @author Gopal Sharma <gopalsharma66@gmail.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
+ * Resource owner credentials login flow.
+ *
+ * @package    auth_azureb2c
+ * @copyright  2020 Gopal Sharma <gopalsharma66@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace auth_azureb2c\loginflow;
@@ -29,10 +30,9 @@ namespace auth_azureb2c\loginflow;
 class rocreds extends \auth_azureb2c\loginflow\base {
     /**
      * Check for an existing user object.
-     * @param string $azureb2cuniqid The user object ID to look up.
-     * @param string $username The original username.
+     *
+     * @param string $o356username The original username.
      * @return string If there is an existing user object, return the username associated with it.
-     *                If there is no existing user object, return the original username.
      */
     protected function check_objects($o356username) {
         global $DB;
@@ -52,11 +52,12 @@ class rocreds extends \auth_azureb2c\loginflow\base {
     /**
      * Provides a hook into the login page.
      *
-     * @param object &$frm Form object.
-     * @param object &$user User object.
+     * @param object $frm Form object.
+     * @param object $user User object.
+     * @return bool
      */
     public function loginpage_hook(&$frm, &$user) {
-        global $DB;
+        global $DB, $CFG;
 
         if (empty($frm)) {
             $frm = data_submitted();
@@ -111,11 +112,11 @@ class rocreds extends \auth_azureb2c\loginflow\base {
             $failurereason = AUTH_LOGIN_UNAUTHORISED;
 
             // Trigger login failed event.
-            $event = \core\event\user_login_failed::create(array('other' => array('username' => $username,
-                    'reason' => $failurereason)));
+            $event = \core\event\user_login_failed::create(['other' => ['username' => $username,
+                    'reason' => $failurereason]]);
             $event->trigger();
 
-            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Unknown user, can not create new accounts:  $username  ".
+            error_log('[client ' . getremoteaddr() . "]  $CFG->wwwroot  Unknown user, can not create new accounts:  $username  " .
                     $_SERVER['HTTP_USER_AGENT']);
             return false;
         }
@@ -128,7 +129,7 @@ class rocreds extends \auth_azureb2c\loginflow\base {
      * This is the primary method that is used by the authenticate_user_login() function in moodlelib.php.
      *
      * @param string $username The username (with system magic quotes)
-     * @param string $password The password (with system magic quotes)
+     * @param string|null $password The password (with system magic quotes)
      * @return bool Authentication success or failure.
      */
     public function user_login($username, $password = null) {
@@ -154,8 +155,7 @@ class rocreds extends \auth_azureb2c\loginflow\base {
             // Check restrictions.
             $passed = $this->checkrestrictions($idtoken);
             if ($passed !== true) {
-                $errstr = 'User prevented from logging in due to restrictions.';
-                \auth_azureb2c\utils::debug($errstr, 'handleauthresponse', $idtoken);
+                \auth_azureb2c\utils::debug('User prevented from logging in due to restrictions.', 'handleauthresponse', $idtoken);
                 return false;
             }
 
@@ -163,7 +163,7 @@ class rocreds extends \auth_azureb2c\loginflow\base {
             if (!empty($tokenrec)) {
                 $this->updatetoken($tokenrec->id, $authparams, $tokenparams);
             } else {
-                $tokenrec = $this->createtoken($azureb2cuniqid, $username, $authparams, $tokenparams, $idtoken);
+                $this->createtoken($azureb2cuniqid, $username, $authparams, $tokenparams, $idtoken);
             }
             return true;
         }

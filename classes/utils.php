@@ -12,19 +12,27 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  See the LICENSE file.
 
 /**
- * @package auth_azureb2c
- * @author Gopal Sharma <gopalsharma66@gmail.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
+ * General purpose utility class.
+ *
+ * @package    auth_azureb2c
+ * @author     Gopal Sharma <gopalsharma66@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
 namespace auth_azureb2c;
 
+use moodle_exception;
+
 /**
  * General purpose utility class.
+ *
+ * @package    auth_azureb2c
+ * @copyright  2020 Gopal Sharma <gopalsharma66@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class utils {
 
@@ -32,44 +40,46 @@ class utils {
      * Process an azureb2c JSON response.
      *
      * @param string $response The received JSON.
+     * @param array $expectedstructure The expected JSON structure.
      * @return array The parsed JSON.
+     * @throws moodle_exception
      */
-    public static function process_json_response($response, array $expectedstructure = array()) {
+    public static function process_json_response($response, array $expectedstructure = []) {
         $backtrace = debug_backtrace(0);
         $callingclass = (isset($backtrace[1]['class'])) ? $backtrace[1]['class'] : '?';
         $callingfunc = (isset($backtrace[1]['function'])) ? $backtrace[1]['function'] : '?';
         $callingline = (isset($backtrace[0]['line'])) ? $backtrace[0]['line'] : '?';
-        $caller = $callingclass.'::'.$callingfunc.':'.$callingline;
+        $caller = $callingclass . '::' . $callingfunc . ':' . $callingline;
 
         $result = @json_decode($response, true);
         if (empty($result) || !is_array($result)) {
             self::debug('Bad response received', $caller, $response);
-            throw new \moodle_exception('errorazureb2ccall', 'auth_azureb2c');
+            throw new moodle_exception('errorazureb2ccall', 'auth_azureb2c');
         }
 
         if (isset($result['error'])) {
             $errmsg = 'Error response received.';
             self::debug($errmsg, $caller, $result);
             if (isset($result['error_description'])) {
-                throw new \moodle_exception('errorazureb2ccall_message', 'auth_azureb2c', '', $result['error_description']);
+                throw new moodle_exception('errorazureb2ccall_message', 'auth_azureb2c', '', $result['error_description']);
             } else {
-                throw new \moodle_exception('errorazureb2ccall', 'auth_azureb2c');
+                throw new moodle_exception('errorazureb2ccall', 'auth_azureb2c');
             }
         }
 
         foreach ($expectedstructure as $key => $val) {
             if (!isset($result[$key])) {
-                $errmsg = 'Invalid structure received. No "'.$key.'"';
+                $errmsg = 'Invalid structure received. No "' . $key . '"';
                 self::debug($errmsg, $caller, $result);
-                throw new \moodle_exception('errorazureb2ccall', 'auth_azureb2c');
+                throw new moodle_exception('errorazureb2ccall', 'auth_azureb2c');
             }
 
             if ($val !== null && $result[$key] !== $val) {
                 $strreceivedval = self::tostring($result[$key]);
                 $strval = self::tostring($val);
-                $errmsg = 'Invalid structure received. Invalid "'.$key.'". Received "'.$strreceivedval.'", expected "'.$strval.'"';
+                $errmsg = 'Invalid structure received. Invalid "' . $key . '". Received "' . $strreceivedval . '", expected "' . $strval . '"';
                 self::debug($errmsg, $caller, $result);
-                throw new \moodle_exception('errorazureb2ccall', 'auth_azureb2c');
+                throw new moodle_exception('errorazureb2ccall', 'auth_azureb2c');
             }
         }
         return $result;
@@ -84,9 +94,9 @@ class utils {
     public static function tostring($val) {
         if (is_scalar($val)) {
             if (is_bool($val)) {
-                return '(bool)'.(string)(int)$val;
+                return '(bool)' . (string)(int)$val;
             } else {
-                return '('.gettype($val).')'.(string)$val;
+                return '(' . gettype($val) . ')' . (string)$val;
             }
         } else if (is_null($val)) {
             return '(null)';
@@ -96,7 +106,7 @@ class utils {
                 'line' => $val->getLine(),
                 'message' => $val->getMessage(),
             ];
-            if ($val instanceof \moodle_exception) {
+            if ($val instanceof moodle_exception) {
                 $valinfo['debuginfo'] = $val->debuginfo;
                 $valinfo['errorcode'] = $val->errorcode;
                 $valinfo['module'] = $val->module;
@@ -111,13 +121,15 @@ class utils {
      * Record a debug message.
      *
      * @param string $message The debug message to log.
+     * @param string $where Where the debug message was generated.
+     * @param mixed $debugdata Additional debug data.
      */
     public static function debug($message, $where = '', $debugdata = null) {
         $debugmode = (bool)get_config('auth_azureb2c', 'debugmode');
         if ($debugmode === true) {
             $fullmessage = (!empty($where)) ? $where : 'Unknown function';
-            $fullmessage .= ': '.$message;
-            $fullmessage .= ' Data: '.static::tostring($debugdata);
+            $fullmessage .= ': ' . $message;
+            $fullmessage .= ' Data: ' . static::tostring($debugdata);
             $event = \auth_azureb2c\event\action_failed::create(['other' => $fullmessage]);
             $event->trigger();
         }
@@ -131,6 +143,6 @@ class utils {
     public static function get_redirecturl() {
         global $CFG;
         $wwwroot = (!empty($CFG->loginhttps)) ? str_replace('http://', 'https://', $CFG->wwwroot) : $CFG->wwwroot;
-        return $wwwroot.'/auth/azureb2c/';
+        return $wwwroot . '/auth/azureb2c/';
     }
 }

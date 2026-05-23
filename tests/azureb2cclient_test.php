@@ -12,26 +12,26 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  See the LICENSE file.
 
 /**
- * @package auth_azureb2c
- * @author Gopal Sharma <gopalsharma66@gmail.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
+ * Tests for Azure AD B2C Connect Client.
+ *
+ * @package    auth_azureb2c
+ * @copyright  2020 Gopal Sharma <gopalsharma66@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-
 /**
- * Tests azureb2cclient.
+ * Tests for azureb2cclient.
  *
- * @group auth_azureb2c
- * @group office365
+ * @group      auth_azureb2c
+ * @group      office365
+ * @coversDefaultClass \auth_azureb2c\azureb2cclient
  */
-class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
+class auth_azureb2c_azureb2cclient_test extends advanced_testcase {
     /**
      * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.
      */
@@ -42,6 +42,12 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
 
     /**
      * Test getting and setting credentials.
+     *
+     * @covers ::setcreds
+     * @covers ::get_clientid
+     * @covers ::get_clientsecret
+     * @covers ::get_redirecturi
+     * @covers ::get_resource
      */
     public function test_creds_getters_and_setters(): void {
         $httpclient = new \auth_azureb2c\tests\mockhttpclient();
@@ -68,34 +74,28 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_endpoints(): array {
+    public static function dataprovider_endpoints(): array {
         $tests = [];
-
         $tests['oneinvalid'] = [
             ['auth' => 100],
-            ['Exception', 'Invalid Endpoint URI received.']
+            ['Exception', 'Invalid Endpoint URI received.'],
         ];
-
         $tests['oneinvalidonevalid1'] = [
             ['auth' => 100, 'token' => 'http://example.com/token'],
-            ['Exception', 'Invalid Endpoint URI received.']
+            ['Exception', 'Invalid Endpoint URI received.'],
         ];
-
         $tests['oneinvalidonevalid2'] = [
             ['token' => 'http://example.com/token', 'auth' => 100],
-            ['Exception', 'Invalid Endpoint URI received.']
+            ['Exception', 'Invalid Endpoint URI received.'],
         ];
-
         $tests['onevalid'] = [
             ['token' => 'http://example.com/token'],
-            []
+            [],
         ];
-
         $tests['twovalid'] = [
             ['auth' => 'http://example.com/auth', 'token' => 'http://example.com/token'],
-            []
+            [],
         ];
-
         return $tests;
     }
 
@@ -103,6 +103,10 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
      * Test setting and getting endpoints.
      *
      * @dataProvider dataprovider_endpoints
+     * @param array $endpoints The endpoints to set.
+     * @param array $expectedexception The expected exception.
+     * @covers ::setendpoints
+     * @covers ::get_endpoint
      */
     public function test_endpoints_getters_and_setters($endpoints, $expectedexception): void {
         if (!empty($expectedexception)) {
