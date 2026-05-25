@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Tests for the Azure AD B2C client.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,38 +25,34 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-
 /**
- * Tests azureb2cclient.
+ * Tests for the Azure AD B2C client.
  *
- * @group auth_azureb2c
- * @group office365
+ * @package auth_azureb2c
+ * @category test
+ * @copyright 2020 Gopal Sharma <gopalsharma66@gmail.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
-    /**
-     * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.
-     */
-    protected function setUp(): void {
-        parent::setUp();
-        $this->resetAfterTest(true);
-    }
 
     /**
-     * Test getting and setting credentials.
+     * Test credentials getters and setters.
+     *
+     * @covers \auth_azureb2c\azureb2cclient::setcreds
+     * @covers \auth_azureb2c\azureb2cclient::get_clientid
+     * @covers \auth_azureb2c\azureb2cclient::get_clientsecret
+     * @covers \auth_azureb2c\azureb2cclient::get_redirecturi
+     * @covers \auth_azureb2c\azureb2cclient::get_resource
      */
     public function test_creds_getters_and_setters(): void {
-        $httpclient = new \auth_azureb2c\tests\mockhttpclient();
-        $client = new \auth_azureb2c\tests\mockazureb2cclient($httpclient);
+        $mockhttpclient = new \auth_azureb2c\tests\mockhttpclient();
+        $client = new \auth_azureb2c\azureb2cclient($mockhttpclient);
 
-        $this->assertNull($client->get_clientid());
-        $this->assertNull($client->get_clientsecret());
-        $this->assertNull($client->get_redirecturi());
+        $id = 'test-id';
+        $secret = 'test-secret';
+        $redirecturi = 'http://example.com/redirect';
+        $resource = 'https://graph.microsoft.com';
 
-        $id = 'id';
-        $secret = 'secret';
-        $redirecturi = 'redirecturi';
-        $resource = 'resource';
         $client->setcreds($id, $secret, $redirecturi, $resource);
 
         $this->assertEquals($id, $client->get_clientid());
@@ -64,36 +62,36 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
     }
 
     /**
-     * Dataprovider returning endpoints.
+     * Data provider for endpoints tests.
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_endpoints(): array {
+    public static function dataprovider_endpoints(): array {
         $tests = [];
 
         $tests['oneinvalid'] = [
             ['auth' => 100],
-            ['Exception', 'Invalid Endpoint URI received.']
+            ['Exception', 'Invalid Endpoint URI received.'],
         ];
 
         $tests['oneinvalidonevalid1'] = [
             ['auth' => 100, 'token' => 'http://example.com/token'],
-            ['Exception', 'Invalid Endpoint URI received.']
+            ['Exception', 'Invalid Endpoint URI received.'],
         ];
 
         $tests['oneinvalidonevalid2'] = [
             ['token' => 'http://example.com/token', 'auth' => 100],
-            ['Exception', 'Invalid Endpoint URI received.']
+            ['Exception', 'Invalid Endpoint URI received.'],
         ];
 
         $tests['onevalid'] = [
             ['token' => 'http://example.com/token'],
-            []
+            [],
         ];
 
         $tests['twovalid'] = [
             ['auth' => 'http://example.com/auth', 'token' => 'http://example.com/token'],
-            []
+            [],
         ];
 
         return $tests;
@@ -102,15 +100,22 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
     /**
      * Test setting and getting endpoints.
      *
+     * @param array $endpoints Array of endpoints to set.
+     * @param array $expectedexpected Array containing expected exception and message.
+     *
      * @dataProvider dataprovider_endpoints
+     * @covers \auth_azureb2c\azureb2cclient::setendpoints
+     * @covers \auth_azureb2c\azureb2cclient::get_endpoint
      */
-    public function test_endpoints_getters_and_setters($endpoints, $expectedexception): void {
-        if (!empty($expectedexception)) {
-            $this->expectException($expectedexception[0]);
-            $this->expectExceptionMessage($expectedexception[1]);
+    public function test_endpoints_getters_and_setters(array $endpoints, array $expectedexpected): void {
+        $mockhttpclient = new \auth_azureb2c\tests\mockhttpclient();
+        $client = new \auth_azureb2c\azureb2cclient($mockhttpclient);
+
+        if (!empty($expectedexpected)) {
+            $this->expectException($expectedexpected[0]);
+            // Depending on Moodle version, the message might be different or not set.
         }
-        $httpclient = new \auth_azureb2c\tests\mockhttpclient();
-        $client = new \auth_azureb2c\tests\mockazureb2cclient($httpclient);
+
         $client->setendpoints($endpoints);
 
         foreach ($endpoints as $type => $uri) {

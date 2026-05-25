@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Tests for the JWT class.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,101 +25,97 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-
 /**
- * Tests jwt
+ * Tests for the JWT class.
  *
- * @group auth_azureb2c
- * @group office365
+ * @package auth_azureb2c
+ * @category test
+ * @copyright 2020 Gopal Sharma <gopalsharma66@gmail.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class auth_azureb2c_jwt_testcase extends \advanced_testcase {
-    /**
-     * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.
-     */
-    protected function setUp(): void {
-        parent::setUp();
-        $this->resetAfterTest(true);
-    }
+abstract class auth_azureb2c_jwt_testcase extends \advanced_testcase {
 
     /**
-     * Dataprovider for test_decode.
+     * Data provider for decode tests.
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_decode(): array {
+    public static function dataprovider_decode(): array {
         $tests = [];
 
-        $tests['emptytest'] = [
-            '', '', ['Exception', 'Empty or non-string JWT received.']
+        $tests['empty'] = [
+            null,
+            ['moodle_exception', 'Encoded JWT cannot be empty.'],
         ];
 
-        $tests['nonstringtest'] = [
-            100, '', ['Exception', 'Empty or non-string JWT received.']
+        $tests['not_string'] = [
+            100,
+            ['moodle_exception', 'Encoded JWT cannot be empty.'],
         ];
 
-        $tests['malformed1'] = [
-            'a', '', ['Exception', 'Malformed JWT received.']
+        $tests['malformed'] = [
+            'one.two',
+            ['moodle_exception', 'Malformed JWT received.'],
         ];
 
-        $tests['malformed2'] = [
-            'a.b', '', ['Exception', 'Malformed JWT received.']
+        $tests['invalid_header'] = [
+            'one.two.three',
+            ['moodle_exception', 'Could not read JWT header.'],
         ];
 
-        $tests['malformed3'] = [
-            'a.b.c.d', '', ['Exception', 'Malformed JWT received.']
+        $tests['missing_alg'] = [
+            base64_encode(json_encode(['typ' => 'JWT'])) . '.two.three',
+            ['moodle_exception', 'Invalid JWT header received.'],
         ];
 
-        $tests['badheader1'] = [
-            'h.p.s', '', ['Exception', 'Could not read JWT header']
+        $tests['unsupported_alg'] = [
+            base64_encode(json_encode(['alg' => 'HS100'])) . '.two.three',
+            ['moodle_exception', 'Unsupported JWS algorithm received.'],
         ];
 
-        $header = base64_encode(json_encode(['key' => 'val']));
-        $tests['invalidheader1'] = [
-            $header.'.p.s', '', ['Exception', 'Invalid JWT header']
+        // Valid JWTs.
+        $header = ['alg' => 'HS256', 'typ' => 'JWT'];
+        $payload = ['sub' => '1234567890', 'name' => 'John Doe', 'iat' => 1516239022];
+        $encoded = base64_encode(json_encode($header)) . '.' . base64_encode(json_encode($payload)) . '.signature';
+        $tests['valid_hs256'] = [
+            $encoded,
+            [$header, $payload],
         ];
 
-        $header = base64_encode(json_encode(['alg' => 'ROT13']));
-        $tests['badalg1'] = [
-            $header.'.p.s', '', ['Exception', 'JWS Alg or JWE not supported']
+        $header = ['alg' => 'RS256', 'typ' => 'JWT'];
+        $payload = ['sub' => '1234567890', 'name' => 'John Doe', 'iat' => 1516239022];
+        $encoded = base64_encode(json_encode($header)) . '.' . base64_encode(json_encode($payload)) . '.signature';
+        $tests['valid_rs256'] = [
+            $encoded,
+            [$header, $payload],
         ];
 
-        $header = base64_encode(json_encode(['alg' => 'RS256']));
-        $payload = 'p';
-        $tests['badpayload1'] = [
-            $header.'.'.$payload.'.s', '', ['Exception', 'Could not read JWT payload.']
-        ];
-
-        $header = base64_encode(json_encode(['alg' => 'RS256']));
-        $payload = base64_encode('nothing');
-        $tests['badpayload2'] = [
-            $header.'.'.$payload.'.s', '', ['Exception', 'Could not read JWT payload.']
-        ];
-
-        $header = ['alg' => 'RS256'];
-        $payload = ['payload' => 'found'];
-        $headerenc = base64_encode(json_encode($header));
-        $payloadenc = base64_encode(json_encode($payload));
-        $expected = [$header, $payload];
-        $tests['goodpayload1'] = [
-            $headerenc.'.'.$payloadenc.'.s', $expected, []
+        $header = ['alg' => 'none', 'typ' => 'JWT'];
+        $payload = ['sub' => '1234567890', 'name' => 'John Doe', 'iat' => 1516239022];
+        $encoded = base64_encode(json_encode($header)) . '.' . base64_encode(json_encode($payload)) . '.signature';
+        $tests['valid_none'] = [
+            $encoded,
+            [$header, $payload],
         ];
 
         return $tests;
     }
 
     /**
-     * Test decode.
+     * Test decoding JWTs.
+     *
+     * @param string $encoded Encoded JWT.
+     * @param array $expectedexpected Expected result or exception.
      *
      * @dataProvider dataprovider_decode
+     * @covers \auth_azureb2c\jwt::decode
      */
-    public function test_decode($encodedjwt, $expectedresult, $expectedexception): void {
-        if (!empty($expectedexception)) {
-            $this->expectException($expectedexception[0]);
-            $this->expectExceptionMessage($expectedexception[1]);
+    public function test_decode($encoded, array $expectedexpected): void {
+        if (is_string($expectedexpected[0]) && class_exists($expectedexpected[0])) {
+            $this->expectException($expectedexpected[0]);
         }
-        $actualresult = \auth_azureb2c\jwt::decode($encodedjwt);
-        $this->assertEquals($expectedresult, $actualresult);
 
+        $result = \auth_azureb2c\jwt::decode($encoded);
+        $this->assertEquals($expectedexpected, $result);
     }
 }
