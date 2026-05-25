@@ -205,10 +205,20 @@ class authcode extends \auth_azureb2c\loginflow\base {
         if (empty($staterec)) {
             throw new \moodle_exception('errorauthunknownstate', 'auth_azureb2c');
         }
+
+        // Login CSRF protection: check that the stored sesskey matches the current session.
+        if ($staterec->sesskey !== sesskey()) {
+            \auth_azureb2c\utils::debug('Sesskey mismatch.', 'authcode::handleauthresponse', [
+                'stored' => $staterec->sesskey,
+                'current' => sesskey(),
+            ]);
+            throw new \moodle_exception('errorauthunknownstate', 'auth_azureb2c');
+        }
+
         $orignonce = $staterec->nonce;
         $additionaldata = [];
         if (!empty($staterec->additionaldata)) {
-            $additionaldata = @unserialize($staterec->additionaldata);
+            $additionaldata = @unserialize($staterec->additionaldata, ['allowed_classes' => false]);
             if (!is_array($additionaldata)) {
                 $additionaldata = [];
             }
