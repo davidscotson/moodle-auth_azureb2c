@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+* Strings for the Azure AD B2C authentication plugin.
 
 /**
  * @package auth_azureb2c

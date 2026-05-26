@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Capability definitions for the Azure AD B2C authentication plugin.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,25 +25,26 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-
 $capabilities = [
-    'auth/azureb2c:manageconnection' => [
-        'riskbitmask' => RISK_CONFIG,
+    'auth/azureb2c:link' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_USER,
-        'archetypes' => []
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
     ],
-    'auth/azureb2c:manageconnectionconnect' => [
-        'riskbitmask' => RISK_CONFIG,
+    'auth/azureb2c:disconnect' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_USER,
-        'archetypes' => []
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
     ],
-    'auth/azureb2c:manageconnectiondisconnect' => [
-        'riskbitmask' => RISK_CONFIG,
+    'auth/azureb2c:manage' => [
         'captype' => 'write',
-        'contextlevel' => CONTEXT_USER,
-        'archetypes' => []
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
     ],
 ];

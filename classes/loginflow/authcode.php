@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package auth_azureb2c
+ * @package    auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
@@ -170,7 +170,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
      * @param array $authparams Received parameters.
      */
     protected function handleauthresponse(array $authparams) {
-        global $DB, $CFG, $STATEADDITIONALDATA, $USER;
+        global $DB, $CFG, $stateadditionaldata, $USER;
 
         if (!empty($authparams['error_description'])) {
             // AADB2C90091 user cancel error code
@@ -205,15 +205,25 @@ class authcode extends \auth_azureb2c\loginflow\base {
         if (empty($staterec)) {
             throw new \moodle_exception('errorauthunknownstate', 'auth_azureb2c');
         }
+
+        // Login CSRF protection: check that the stored sesskey matches the current session.
+        if ($staterec->sesskey !== sesskey()) {
+            \auth_azureb2c\utils::debug('Sesskey mismatch.', 'authcode::handleauthresponse', [
+                'stored' => $staterec->sesskey,
+                'current' => sesskey(),
+            ]);
+            throw new \moodle_exception('errorauthunknownstate', 'auth_azureb2c');
+        }
+
         $orignonce = $staterec->nonce;
         $additionaldata = [];
         if (!empty($staterec->additionaldata)) {
-            $additionaldata = @unserialize($staterec->additionaldata);
+            $additionaldata = @unserialize($staterec->additionaldata, ['allowed_classes' => false]);
             if (!is_array($additionaldata)) {
                 $additionaldata = [];
             }
         }
-        $STATEADDITIONALDATA = $additionaldata;
+        $stateadditionaldata = $additionaldata;
         $DB->delete_records('auth_azureb2c_state', ['id' => $staterec->id]);
 
         // Get token from auth code.

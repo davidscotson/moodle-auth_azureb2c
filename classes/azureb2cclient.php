@@ -15,7 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package auth_azureb2c
+ * Client for Azure AD B2C.
+ *
+ * @package    auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
@@ -39,6 +41,9 @@ class azureb2cclient {
     /** @var string The client redirect URI. */
     protected $redirecturi;
 
+    /** @var string The resource. */
+    protected $resource;
+
     /** @var array Array of endpoints. */
     protected $endpoints = [];
 
@@ -57,6 +62,7 @@ class azureb2cclient {
      * @param string $id The registered client ID.
      * @param string $secret The registered client secret.
      * @param string $redirecturi The registered client redirect URI.
+     * @param string $resource The resource.
      */
     public function setcreds($id, $secret, $redirecturi, $resource) {
         $this->clientid = $id;
@@ -158,11 +164,12 @@ class azureb2cclient {
      * Generate a new state parameter.
      *
      * @param string $nonce The generated nonce value.
+     * @param array $stateparams Parameters to store as state.
      * @return string The new state value.
      */
     protected function getnewstate($nonce, array $stateparams = array()) {
         global $DB;
-        $staterec = new \stdClass;
+        $staterec = new \stdClass();
         $staterec->sesskey = sesskey();
         $staterec->state = random_string(15);
         $staterec->nonce = $nonce;
@@ -232,7 +239,6 @@ class azureb2cclient {
     /**
      * Exchange an authorization code for an access token.
      *
-     * @param string $tokenendpoint The token endpoint URI.
      * @param string $code An authorization code.
      * @return array Received parameters.
      */
