@@ -179,5 +179,18 @@ function xmldb_auth_azureb2c_upgrade($oldversion) {
         }
         upgrade_plugin_savepoint($result, '2018051700.01', 'auth', 'azureb2c');
     }
+
+    if ($result && $oldversion < 2023030701) {
+        // Add sesskey field to auth_azureb2c_state table.
+        $table = new xmldb_table('auth_azureb2c_state');
+        $field = new xmldb_field('sesskey', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, 'id');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint($result, '2023030701', 'auth', 'azureb2c');
+    }
+
     return $result;
 }
