@@ -15,17 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Event definitions for the Azure AD B2C authentication plugin.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $observers = [
     [
         'eventname' => '\core\event\user_deleted',
-        'callback' => '\auth_azureb2c\observers::handle_user_deleted',
-        'priority' => 200,
-        'internal' => false,
+        'callback' => '\auth_azureb2c\observers::user_deleted',
     ],
 ];

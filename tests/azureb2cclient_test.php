@@ -16,8 +16,9 @@
 
 /**
  * Tests for the Azure AD B2C client.
+namespace auth_azureb2c;
  *
- * @package auth_azureb2c
+ * @package    auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
@@ -28,13 +29,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Tests for the Azure AD B2C client.
  *
- * @package auth_azureb2c
+ * @package    auth_azureb2c
  * @category test
  * @copyright 2020 Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
-
+class azureb2cclient_testcase extends \advanced_testcase {
     /**
      * Test credentials getters and setters.
      *

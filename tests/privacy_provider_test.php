@@ -16,8 +16,9 @@
 
 /**
  * Tests for the privacy provider.
+namespace auth_azureb2c;
  *
- * @package auth_azureb2c
+ * @package    auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
@@ -32,13 +33,12 @@ use core_privacy\tests\provider_testcase;
 /**
  * Tests for the privacy provider.
  *
- * @package auth_azureb2c
+ * @package    auth_azureb2c
  * @category test
  * @copyright 2020 Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class auth_azureb2c_privacy_testcase extends provider_testcase {
-
+abstract class privacy_provider_testcase extends provider_testcase {
     /**
      * Set up.
      */
