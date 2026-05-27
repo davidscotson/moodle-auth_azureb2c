@@ -205,10 +205,11 @@ class authcode extends \auth_azureb2c\loginflow\base {
         if (empty($staterec)) {
             throw new \moodle_exception('errorauthunknownstate', 'auth_azureb2c');
         }
+
         $orignonce = $staterec->nonce;
         $additionaldata = [];
         if (!empty($staterec->additionaldata)) {
-            $additionaldata = @unserialize($staterec->additionaldata);
+            $additionaldata = @unserialize($staterec->additionaldata, ['allowed_classes' => false]);
             if (!is_array($additionaldata)) {
                 $additionaldata = [];
             }
