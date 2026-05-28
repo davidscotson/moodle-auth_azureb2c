@@ -1,0 +1,4 @@
+## 2025-05-14 - Harden JWT validation and serialization
+**Vulnerability:** The JWT library allowed the 'none' algorithm, which could let attackers bypass signature verification by stripping the signature and updating the header. Additionally, the plugin used `unserialize()` on 'additionaldata' from the database without restricting allowed classes, risking PHP Object Injection if that data was ever compromised or tampered with.
+**Learning:** Even if data is currently coming from a trusted source (like the plugin's own database table), hardening `unserialize()` with `['allowed_classes' => false]` is a critical defense-in-depth measure. Similarly, 'none' should never be in a JWT whitelist unless there is a very specific, documented reason.
+**Prevention:** Always restrict `unserialize()` to allowed classes (or none) and ensure JWT validation logic explicitly excludes insecure algorithms like 'none'.
