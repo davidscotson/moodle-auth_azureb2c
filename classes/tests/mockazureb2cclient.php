@@ -38,6 +38,10 @@ class mockazureb2cclient extends \auth_azureb2c\azureb2cclient {
 
     /**
      * Stub method to access protected parent method.
+     *
+     * @param string $nonce The nonce value.
+     * @param array $stateparams Additional state parameters.
+     * @return string The state value.
      */
     public function getnewstate($nonce, array $stateparams = array()) {
         return parent::getnewstate($nonce, $stateparams);
