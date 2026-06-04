@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version details.
+ * Plugin version information.
  *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
