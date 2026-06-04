@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Access requirements.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,25 +25,23 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-
 $capabilities = [
     'auth/azureb2c:manageconnection' => [
         'riskbitmask' => RISK_CONFIG,
         'captype' => 'write',
         'contextlevel' => CONTEXT_USER,
-        'archetypes' => []
+        'archetypes' => [],
     ],
     'auth/azureb2c:manageconnectionconnect' => [
         'riskbitmask' => RISK_CONFIG,
         'captype' => 'write',
         'contextlevel' => CONTEXT_USER,
-        'archetypes' => []
+        'archetypes' => [],
     ],
     'auth/azureb2c:manageconnectiondisconnect' => [
         'riskbitmask' => RISK_CONFIG,
         'captype' => 'write',
         'contextlevel' => CONTEXT_USER,
-        'archetypes' => []
+        'archetypes' => [],
     ],
 ];
