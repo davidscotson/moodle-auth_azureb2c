@@ -119,7 +119,7 @@ function xmldb_auth_azureb2c_upgrade($oldversion) {
 
     if ($result && $oldversion < 2015012707) {
         if (!$dbman->table_exists('auth_azureb2c_prevlogin')) {
-            $dbman->install_one_table_from_xmldb_file(__DIR__.'/install.xml', 'auth_azureb2c_prevlogin');
+            $dbman->install_one_table_from_xmldb_file(__DIR__ . '/install.xml', 'auth_azureb2c_prevlogin');
         }
         upgrade_plugin_savepoint($result, '2015012707', 'auth', 'azureb2c');
     }
