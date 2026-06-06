@@ -23,6 +23,8 @@
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
+namespace auth_azureb2c;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -32,6 +34,12 @@ global $CFG;
  *
  * @group auth_azureb2c
  * @group office365
+ */
+/**
+ * Tests for the azureb2cclient class.
+ *
+ * @package auth_azureb2c
+ * @category test
  */
 class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
     /**
@@ -70,7 +78,12 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_endpoints(): array {
+    /**
+     * Data provider for endpoints.
+     *
+     * @return array
+     */
+    public static function dataprovider_endpoints(): array {
         $tests = [];
 
         $tests['oneinvalid'] = [
