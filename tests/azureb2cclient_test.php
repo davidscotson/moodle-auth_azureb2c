@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Tests for the azureb2cclient class.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -73,27 +75,27 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
 
         $tests['oneinvalid'] = [
             ['auth' => 100],
-            ['Exception', 'Invalid Endpoint URI received.']
+            ['Exception', 'Invalid Endpoint URI received.'],
         ];
 
         $tests['oneinvalidonevalid1'] = [
             ['auth' => 100, 'token' => 'http://example.com/token'],
-            ['Exception', 'Invalid Endpoint URI received.']
+            ['Exception', 'Invalid Endpoint URI received.'],
         ];
 
         $tests['oneinvalidonevalid2'] = [
             ['token' => 'http://example.com/token', 'auth' => 100],
-            ['Exception', 'Invalid Endpoint URI received.']
+            ['Exception', 'Invalid Endpoint URI received.'],
         ];
 
         $tests['onevalid'] = [
             ['token' => 'http://example.com/token'],
-            []
+            [],
         ];
 
         $tests['twovalid'] = [
             ['auth' => 'http://example.com/auth', 'token' => 'http://example.com/token'],
-            []
+            [],
         ];
 
         return $tests;
@@ -102,6 +104,8 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
     /**
      * Test setting and getting endpoints.
      *
+     * @param array $endpoints The endpoints.
+     * @param array $expectedresults The expected results.
      * @dataProvider dataprovider_endpoints
      */
     public function test_endpoints_getters_and_setters($endpoints, $expectedexception): void {
