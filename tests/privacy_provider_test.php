@@ -23,9 +23,11 @@
  * @copyright (C) 2019 Remote Learner.net Inc http://www.remote-learner.net
  */
 
+namespace auth_azureb2c;
+
 defined('MOODLE_INTERNAL') || die();
 
-use \auth_azureb2c\privacy\provider;
+use auth_azureb2c\privacy\provider;
 
 /**
  * Privacy test for auth_azureb2c
@@ -35,11 +37,21 @@ use \auth_azureb2c\privacy\provider;
  * @group office365
  * @group office365_privacy
  */
+/**
+ * Tests for the privacy provider.
+ *
+ * @package auth_azureb2c
+ * @category test
+ */
 class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testcase {
     /**
      * Tests set up.
      */
+    /**
+     * Set up.
+     */
     public function setUp(): void {
+        parent::setUp();
         global $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -116,14 +128,14 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
         // Token.
         $data = $writer->get_data([
             get_string('privacy:metadata:auth_azureb2c', 'auth_azureb2c'),
-            get_string('privacy:metadata:auth_azureb2c_token', 'auth_azureb2c')
+            get_string('privacy:metadata:auth_azureb2c_token', 'auth_azureb2c'),
         ]);
         $this->assertEquals($tokenrecord->userid, $data->userid);
         $this->assertEquals($tokenrecord->token, $data->token);
         // Previous login.
         $data = $writer->get_data([
             get_string('privacy:metadata:auth_azureb2c', 'auth_azureb2c'),
-            get_string('privacy:metadata:auth_azureb2c_prevlogin', 'auth_azureb2c')
+            get_string('privacy:metadata:auth_azureb2c_prevlogin', 'auth_azureb2c'),
         ]);
         $this->assertEquals($prevloginrecord->userid, $data->userid);
         $this->assertEquals($prevloginrecord->method, $data->method);
@@ -262,7 +274,13 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
      * @return stdClass
      * @throws dml_exception
      */
-    static private function create_token(int $userid): \stdClass {
+    /**
+     * Create token.
+     *
+     * @param int $userid The user ID.
+     * @return \stdClass
+     */
+    private static function create_token(int $userid): \stdClass {
         global $DB;
         $record = new stdClass();
         $record->azureb2cuniqid = "user@example.com";
@@ -287,7 +305,13 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
      * @return stdClass
      * @throws dml_exception
      */
-    static private function create_prevlogin(int $userid): \stdClass {
+    /**
+     * Create prev login.
+     *
+     * @param int $userid The user ID.
+     * @return \stdClass
+     */
+    private static function create_prevlogin(int $userid): \stdClass {
         global $DB;
         $record = new stdClass();
         $record->userid = $userid;
@@ -296,5 +320,4 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
         $record->id = $DB->insert_record('auth_azureb2c_prevlogin', $record);
         return $record;
     }
-
 }
