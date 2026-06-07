@@ -41,6 +41,8 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
 
     /**
      * Constructor.
+     *
+     * @param string $forceloginflow Force login flow.
      */
     public function __construct($forceloginflow = null) {
         global $STATEADDITIONALDATA;
@@ -80,7 +82,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
     /**
      * Set an HTTP client to use.
      *
-     * @param auth_azureb2chttpclientinterface $httpclient [description]
+     * @param \auth_azureb2c\httpclientinterface $httpclient The HTTP client.
      */
     public function set_httpclient(\auth_azureb2c\httpclientinterface $httpclient) {
         return $this->loginflow->set_httpclient($httpclient);
@@ -116,6 +118,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
      *                                "linked" account.
      * @param \moodle_url $redirect Where to redirect if successful.
      * @param \moodle_url $selfurl The page this is accessed from. Used for some redirects.
+     * @param int $userid The user ID.
      */
     public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
                                \moodle_url $selfurl = null, $userid = null) {
@@ -184,7 +187,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
             if (!empty($tokenrec)) {
                 // If the token record username is out of sync (ie username changes), update it.
                 if ($tokenrec->username != $user->username) {
-                    $updatedtokenrec = new \stdClass;
+                    $updatedtokenrec = new \stdClass();
                     $updatedtokenrec->id = $tokenrec->id;
                     $updatedtokenrec->username = $user->username;
                     $DB->update_record('auth_azureb2c_token', $updatedtokenrec);
@@ -196,7 +199,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
                 $tokenrec = $DB->get_record('auth_azureb2c_token', ['username' => $username]);
                 if (!empty($tokenrec)) {
                     $tokenrec->userid = $user->id;
-                    $updatedtokenrec = new \stdClass;
+                    $updatedtokenrec = new \stdClass();
                     $updatedtokenrec->id = $tokenrec->id;
                     $updatedtokenrec->userid = $user->id;
                     $DB->update_record('auth_azureb2c_token', $updatedtokenrec);

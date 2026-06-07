@@ -1,0 +1,4 @@
+## 2025-05-15 - JWT 'none' Algorithm and Insecure Deserialization
+**Vulnerability:** The JWT library allowed the 'none' algorithm, which permits attackers to bypass signature verification. Additionally, the authentication flow used 'unserialize' on state data without restricting classes, risking PHP Object Injection.
+**Learning:** Legacy support for 'none' in JWT libraries is a common but critical oversight. 'unserialize' was used to store session-related metadata without considering the risk of malicious payload injection into the database or state management.
+**Prevention:** Always explicitly whitelist only strong cryptographic algorithms (e.g., RS256, HS256) for JWTs. Use 'allowed_classes => false' with 'unserialize' when only scalar data or arrays are expected, or preferably use 'json_decode'/'json_encode' for serialization.

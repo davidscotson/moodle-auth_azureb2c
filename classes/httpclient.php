@@ -59,7 +59,7 @@ class httpclient extends \curl implements \auth_azureb2c\httpclientinterface {
      */
     protected function get_plugin_version() {
         global $CFG;
-        $plugin = new \stdClass;
+        $plugin = new \stdClass();
         require_once($CFG->dirroot.'/auth/azureb2c/version.php');
         return (isset($plugin->release)) ? $plugin->release : 'unknown';
     }
