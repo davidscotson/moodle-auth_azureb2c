@@ -116,14 +116,14 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
         // Token.
         $data = $writer->get_data([
             get_string('privacy:metadata:auth_azureb2c', 'auth_azureb2c'),
-            get_string('privacy:metadata:auth_azureb2c_token', 'auth_azureb2c')
+            get_string('privacy:metadata:auth_azureb2c_token', 'auth_azureb2c'),
         ]);
         $this->assertEquals($tokenrecord->userid, $data->userid);
         $this->assertEquals($tokenrecord->token, $data->token);
         // Previous login.
         $data = $writer->get_data([
             get_string('privacy:metadata:auth_azureb2c', 'auth_azureb2c'),
-            get_string('privacy:metadata:auth_azureb2c_prevlogin', 'auth_azureb2c')
+            get_string('privacy:metadata:auth_azureb2c_prevlogin', 'auth_azureb2c'),
         ]);
         $this->assertEquals($prevloginrecord->userid, $data->userid);
         $this->assertEquals($prevloginrecord->method, $data->method);
@@ -259,10 +259,9 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
      * Create a token record for the specified userid.
      *
      * @param int $userid
-     * @return stdClass
-     * @throws dml_exception
+     * @return \stdClass
      */
-    static private function create_token(int $userid): \stdClass {
+    private static function create_token(int $userid): \stdClass {
         global $DB;
         $record = new stdClass();
         $record->azureb2cuniqid = "user@example.com";
@@ -284,10 +283,9 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
      * Create a previous login record for the specified userid.
      *
      * @param int $userid
-     * @return stdClass
-     * @throws dml_exception
+     * @return \stdClass
      */
-    static private function create_prevlogin(int $userid): \stdClass {
+    private static function create_prevlogin(int $userid): \stdClass {
         global $DB;
         $record = new stdClass();
         $record->userid = $userid;

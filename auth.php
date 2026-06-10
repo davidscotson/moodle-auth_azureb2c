@@ -41,6 +41,8 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
 
     /**
      * Constructor.
+     *
+     * @param string|null $forceloginflow Force a specific login flow.
      */
     public function __construct($forceloginflow = null) {
         global $STATEADDITIONALDATA;
@@ -80,7 +82,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
     /**
      * Set an HTTP client to use.
      *
-     * @param auth_azureb2chttpclientinterface $httpclient [description]
+     * @param \auth_azureb2c\httpclientinterface $httpclient The HTTP client.
      */
     public function set_httpclient(\auth_azureb2c\httpclientinterface $httpclient) {
         return $this->loginflow->set_httpclient($httpclient);
@@ -114,8 +116,9 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
      * @param bool $justremovetokens If true, just remove the stored azureb2c tokens for the user, otherwise revert login methods.
      * @param bool $donotremovetokens If true, do not remove tokens when disconnecting. This migrates from a login account to a
      *                                "linked" account.
-     * @param \moodle_url $redirect Where to redirect if successful.
-     * @param \moodle_url $selfurl The page this is accessed from. Used for some redirects.
+     * @param \moodle_url|null $redirect Where to redirect if successful.
+     * @param \moodle_url|null $selfurl The page this is accessed from. Used for some redirects.
+     * @param int|null $userid The user ID.
      */
     public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
                                \moodle_url $selfurl = null, $userid = null) {
