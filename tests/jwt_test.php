@@ -25,15 +25,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-
 /**
- * Tests jwt
+ * JWT tests.
  *
  * @group auth_azureb2c
  * @group office365
  */
-class auth_azureb2c_jwt_testcase extends \advanced_testcase {
+class jwt_test extends \advanced_testcase {
     /**
      * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.
      */
@@ -47,7 +45,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_decode(): array {
+    public static function dataprovider_decode(): array {
         $tests = [];
 
         $tests['emptytest'] = [
@@ -123,6 +121,5 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
         }
         $actualresult = \auth_azureb2c\jwt::decode($encodedjwt);
         $this->assertEquals($expectedresult, $actualresult);
-
     }
 }

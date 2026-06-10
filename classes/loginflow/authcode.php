@@ -170,9 +170,11 @@ class authcode extends \auth_azureb2c\loginflow\base {
      * Handle an authorization request response received from the configured OP.
      *
      * @param array $authparams Received parameters.
+     * @return bool
+     * @throws \moodle_exception
      */
     protected function handleauthresponse(array $authparams) {
-        global $DB, $CFG, $STATEADDITIONALDATA, $USER;
+        global $DB, $CFG, $stateadditionaldata, $USER;
 
         if (!empty($authparams['error_description'])) {
             // AADB2C90091 user cancel error code
@@ -215,7 +217,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
                 $additionaldata = [];
             }
         }
-        $STATEADDITIONALDATA = $additionaldata;
+        $stateadditionaldata = $additionaldata;
         $DB->delete_records('auth_azureb2c_state', ['id' => $staterec->id]);
 
         // Get token from auth code.

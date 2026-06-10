@@ -25,17 +25,18 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use \auth_azureb2c\privacy\provider;
+use auth_azureb2c\privacy\provider;
 
 /**
- * Privacy test for auth_azureb2c
+ * Privacy test for auth_azureb2c.
  *
+ * @package auth_azureb2c
  * @group auth_azureb2c
  * @group auth_azureb2c_privacy
  * @group office365
  * @group office365_privacy
  */
-class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Tests set up.
      */
@@ -294,5 +295,4 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
         $record->id = $DB->insert_record('auth_azureb2c_prevlogin', $record);
         return $record;
     }
-
 }

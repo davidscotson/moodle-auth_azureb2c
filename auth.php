@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Auth plugin class.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,8 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/authlib.php');
-require_once($CFG->dirroot.'/login/lib.php');
+require_once($CFG->libdir . '/authlib.php');
+require_once($CFG->dirroot . '/login/lib.php');
 
 /**
  * Azure AD B2C Connect Authentication Plugin.
@@ -45,11 +47,11 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
      * @param string|null $forceloginflow Force a specific login flow.
      */
     public function __construct($forceloginflow = null) {
-        global $STATEADDITIONALDATA;
+        global $stateadditionaldata;
         $loginflow = 'authcode';
 
-        if (!empty($STATEADDITIONALDATA) && isset($STATEADDITIONALDATA['forceflow'])) {
-            $loginflow = $STATEADDITIONALDATA['forceflow'];
+        if (!empty($stateadditionaldata) && isset($stateadditionaldata['forceflow'])) {
+            $loginflow = $stateadditionaldata['forceflow'];
         } else {
             if (!empty($forceloginflow) && is_string($forceloginflow)) {
                 $loginflow = $forceloginflow;
@@ -60,7 +62,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
                 }
             }
         }
-        $loginflowclass = '\auth_azureb2c\loginflow\\'.$loginflow;
+        $loginflowclass = '\auth_azureb2c\loginflow\\' . $loginflow;
         if (class_exists($loginflowclass)) {
             $this->loginflow = new $loginflowclass($this->config);
         } else {
@@ -92,12 +94,11 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
      * Hook for overriding behaviour of login page.
      * This method is called from login/index.php page for all enabled auth plugins.
      *
-     * @global object
-     * @global object
+     * @return bool
      */
     public function loginpage_hook() {
-        global $frm;  // can be used to override submitted login form
-        global $user; // can be used to replace authenticate_user_login()
+        global $frm;
+        global $user;
         return $this->loginflow->loginpage_hook($frm, $user);
     }
 
@@ -120,8 +121,13 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
      * @param \moodle_url|null $selfurl The page this is accessed from. Used for some redirects.
      * @param int|null $userid The user ID.
      */
-    public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
-                               \moodle_url $selfurl = null, $userid = null) {
+    public function disconnect(
+        $justremovetokens = false,
+        $donotremovetokens = false,
+        \moodle_url $redirect = null,
+        \moodle_url $selfurl = null,
+        $userid = null
+    ) {
         return $this->loginflow->disconnect($justremovetokens, $donotremovetokens, $redirect, $selfurl, $userid);
     }
 
@@ -144,8 +150,8 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
     /**
      * Read user information from external database and returns it as array().
      *
-     * @param string $username username
-     * @return mixed array with no magic quotes or false on error
+     * @param string $username The username.
+     * @return array|bool array with no magic quotes or false on error.
      */
     public function get_userinfo($username) {
         return $this->loginflow->get_userinfo($username);
@@ -183,11 +189,11 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
     public function user_authenticated_hook(&$user, $username, $password) {
         global $DB;
         if (!empty($user) && !empty($user->auth) && $user->auth === 'azureb2c') {
-            $tokenrec = $DB->get_record('auth_azureb2c_token', ['userid' => $user->id]);
+            $tokenrec = $DB->get_record('auth_azureb2c_token', array('userid' => $user->id));
             if (!empty($tokenrec)) {
                 // If the token record username is out of sync (ie username changes), update it.
                 if ($tokenrec->username != $user->username) {
-                    $updatedtokenrec = new \stdClass;
+                    $updatedtokenrec = new \stdClass();
                     $updatedtokenrec->id = $tokenrec->id;
                     $updatedtokenrec->username = $user->username;
                     $DB->update_record('auth_azureb2c_token', $updatedtokenrec);
@@ -196,10 +202,10 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
             } else {
                 // There should always be a token record here, so a failure here means
                 // the user's token record doesn't yet contain their userid.
-                $tokenrec = $DB->get_record('auth_azureb2c_token', ['username' => $username]);
+                $tokenrec = $DB->get_record('auth_azureb2c_token', array('username' => $username));
                 if (!empty($tokenrec)) {
                     $tokenrec->userid = $user->id;
-                    $updatedtokenrec = new \stdClass;
+                    $updatedtokenrec = new \stdClass();
                     $updatedtokenrec->id = $tokenrec->id;
                     $updatedtokenrec->userid = $user->id;
                     $DB->update_record('auth_azureb2c_token', $updatedtokenrec);
@@ -219,6 +225,8 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
 
     /**
      * Cron function.
+     *
+     * @return void
      */
     public function cron() {
         global $DB;

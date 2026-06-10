@@ -25,15 +25,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-
 /**
- * Tests azureb2cclient.
+ * Azure B2C client tests.
  *
+ * @package auth_azureb2c
  * @group auth_azureb2c
  * @group office365
  */
-class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
+class azureb2cclient_test extends \advanced_testcase {
     /**
      * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.
      */
@@ -70,7 +69,7 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_endpoints(): array {
+    public static function dataprovider_endpoints(): array {
         $tests = [];
 
         $tests['oneinvalid'] = [
