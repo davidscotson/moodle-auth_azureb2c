@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Redirect handler.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,6 +24,9 @@
  */
 
 require_once(__DIR__.'/../../config.php');
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once(__DIR__.'/auth.php');
 
 $auth = new \auth_plugin_azureb2c('authcode');
