@@ -22,6 +22,9 @@
  */
 
 require_once(__DIR__.'/../../config.php');
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once(__DIR__.'/auth.php');
 
 $auth = new \auth_plugin_azureb2c('authcode');
