@@ -1,0 +1,4 @@
+## 2025-05-15 - Hardening JWT and Unserialize
+**Vulnerability:** The JWT decoding logic in `classes/jwt.php` supported the 'none' algorithm, which could allow attackers to bypass signature verification. Additionally, `unserialize()` was used on database-stored state data in `classes/loginflow/authcode.php` without restricting class instantiation, leading to a potential PHP Object Injection risk.
+**Learning:** Legacy authentication plugins often copy-paste JWT implementations that include insecure defaults like 'none' support. Similarly, `unserialize()` is frequently used for convenience without considering the security implications of object instantiation from untrusted or potentially tampered-with data.
+**Prevention:** Always remove 'none' from supported JWT algorithms in production code. Use `['allowed_classes' => false]` when using `unserialize()` on data that should only contain scalar values or arrays, or better yet, use `json_decode()` if possible.
