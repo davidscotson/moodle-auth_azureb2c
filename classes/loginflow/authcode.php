@@ -159,7 +159,11 @@ class authcode extends \auth_azureb2c\loginflow\base {
      * @param array $stateparams Parameters to store as state.
      * @param array $extraparams Additional parameters to send with the azureb2c request.
      */
-    public function initiateauthrequest($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
+    public function initiateauthrequest(
+        $promptlogin = false,
+        array $stateparams = array(),
+        array $extraparams = array()
+    ) {
         $client = $this->get_azureb2cclient();
         $client->authrequest($promptlogin, $stateparams, $extraparams);
     }
@@ -173,13 +177,11 @@ class authcode extends \auth_azureb2c\loginflow\base {
         global $DB, $CFG, $STATEADDITIONALDATA, $USER;
 
         if (!empty($authparams['error_description'])) {
-            // AADB2C90091 user cancel error code
-            if ( strstr( $authparams['error_description'], 'AADB2C90091' ) ) {
+            // AADB2C90091 user cancel error code.
+            if (strstr($authparams['error_description'], 'AADB2C90091')) {
                 redirect(new \moodle_url('/'));
-                //return;
-                //echo "Text found";
-            } else if (strstr( $authparams['error_description'], 'AADB2C90118' )){
-                //AADB2C90118: The user has forgotten their password.
+            } else if (strstr($authparams['error_description'], 'AADB2C90118')) {
+                // AADB2C90118: The user has forgotten their password.
                 $lang = current_language();
                 $url = get_config('auth_azureb2c', 'resetpassendpoint')."&client_id=". get_config('auth_azureb2c', 'clientid')."&nonce=defaultNonce&redirect_uri=". $CFG->wwwroot."/auth/azureb2c/&scope=openid&response_type=code&prompt=login&ui_locales=$lang";
                 redirect($url);
@@ -264,7 +266,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
                 if (empty($additionaldata['redirect'])) {
                     $redirect = '/auth/azureb2c/ucp.php?o365accountconnected=true';
                 } else if ($additionaldata['redirect'] == '/local/o365/ucp.php') {
-                    $redirect = $additionaldata['redirect'].'?action=connection&o365accountconnected=true';
+                    $redirect = $additionaldata['redirect'] . '?action=connection&o365accountconnected=true';
                 } else {
                     throw new \moodle_exception('errorinvalidredirect_message', 'auth_azureb2c');
                 }
