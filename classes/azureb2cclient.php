@@ -23,6 +23,8 @@
 
 namespace auth_azureb2c;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Azure AD B2C Connect Client
  */
@@ -38,6 +40,9 @@ class azureb2cclient {
 
     /** @var string The client redirect URI. */
     protected $redirecturi;
+
+    /** @var string The resource. */
+    protected $resource;
 
     /** @var array Array of endpoints. */
     protected $endpoints = [];
