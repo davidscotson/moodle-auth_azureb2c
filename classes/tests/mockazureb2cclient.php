@@ -23,6 +23,8 @@
 
 namespace auth_azureb2c\tests;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * A mock azureb2cclient class providing access to all inaccessible properties/methods.
  */

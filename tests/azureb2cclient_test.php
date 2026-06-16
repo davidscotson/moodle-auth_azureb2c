@@ -15,7 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tests for the azureb2c client.
+ * One-line description for azureb2cclient_test.php.
+ *
+ Tests for the azureb2c client.
  *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>

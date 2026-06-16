@@ -15,7 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package auth_azureb2c
+ * One-line description for jwt_test.php.
+ *
+ @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>

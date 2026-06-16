@@ -15,7 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy test for auth_azureb2c
+ * One-line description for privacy_provider_test.php.
+ *
+ Privacy test for auth_azureb2c
  *
  * @package auth_azureb2c
  * @author Remote-Learner.net Inc
