@@ -23,6 +23,8 @@
 
 namespace auth_azureb2c\loginflow;
 
+defined('MOODLE_INTERNAL') || die();
+
 class base {
     /** @var object Plugin config. */
     public $config;
