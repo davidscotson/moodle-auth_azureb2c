@@ -23,6 +23,8 @@
 
 namespace auth_azureb2c\tests;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * A mock azureb2cclient class providing access to all inaccessible properties/methods.
  */
@@ -33,8 +35,15 @@ class mockazureb2cclient extends \auth_azureb2c\azureb2cclient {
     /** @var array Array of endpoints. */
     public $endpoints = [];
 
+    /** @var string The resource. */
+    public $resource;
+
     /**
      * Stub method to access protected parent method.
+     *
+     * @param string $nonce The nonce.
+     * @param array $stateparams The state params.
+     * @return string
      */
     public function getnewstate($nonce, array $stateparams = array()) {
         return parent::getnewstate($nonce, $stateparams);
@@ -49,6 +58,6 @@ class mockazureb2cclient extends \auth_azureb2c\azureb2cclient {
      * @return array Array of request parameters.
      */
     public function getauthrequestparams($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
-        return parent::getauthrequestparams($promptlogin, $stateparams);
+        return parent::getauthrequestparams($promptlogin, $stateparams, $extraparams);
     }
 }

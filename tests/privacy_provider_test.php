@@ -15,7 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy test for auth_azureb2c
+ * One-line description for privacy_provider_test.php.
+ *
+ Privacy test for auth_azureb2c
  *
  * @package auth_azureb2c
  * @author Remote-Learner.net Inc
@@ -25,7 +27,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use \auth_azureb2c\privacy\provider;
+use auth_azureb2c\privacy\provider;
 
 /**
  * Privacy test for auth_azureb2c
@@ -34,12 +36,13 @@ use \auth_azureb2c\privacy\provider;
  * @group auth_azureb2c_privacy
  * @group office365
  * @group office365_privacy
+ * @covers \auth_azureb2c\privacy\provider
  */
-class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testcase {
+abstract class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Tests set up.
      */
-    public function setUp(): void {
+    protected function setUp(): void {
         global $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -111,19 +114,19 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
 
         $writer = \core_privacy\local\request\writer::with_context($usercontext);
         $this->assertFalse($writer->has_any_data());
-        $approvedlist = new core_privacy\local\request\approved_contextlist($user, 'auth_azureb2c', [$usercontext->id]);
+        $approvedlist = new \core_privacy\local\request\approved_contextlist($user, 'auth_azureb2c', [$usercontext->id]);
         provider::export_user_data($approvedlist);
         // Token.
         $data = $writer->get_data([
             get_string('privacy:metadata:auth_azureb2c', 'auth_azureb2c'),
-            get_string('privacy:metadata:auth_azureb2c_token', 'auth_azureb2c')
+            get_string('privacy:metadata:auth_azureb2c_token', 'auth_azureb2c'),
         ]);
         $this->assertEquals($tokenrecord->userid, $data->userid);
         $this->assertEquals($tokenrecord->token, $data->token);
         // Previous login.
         $data = $writer->get_data([
             get_string('privacy:metadata:auth_azureb2c', 'auth_azureb2c'),
-            get_string('privacy:metadata:auth_azureb2c_prevlogin', 'auth_azureb2c')
+            get_string('privacy:metadata:auth_azureb2c_prevlogin', 'auth_azureb2c'),
         ]);
         $this->assertEquals($prevloginrecord->userid, $data->userid);
         $this->assertEquals($prevloginrecord->method, $data->method);
@@ -259,10 +262,10 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
      * Create a token record for the specified userid.
      *
      * @param int $userid
-     * @return stdClass
-     * @throws dml_exception
+     * @return \stdClass
+     * @throws \dml_exception
      */
-    static private function create_token(int $userid): \stdClass {
+    private static function create_token(int $userid): \stdClass {
         global $DB;
         $record = new stdClass();
         $record->azureb2cuniqid = "user@example.com";
@@ -284,10 +287,10 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
      * Create a previous login record for the specified userid.
      *
      * @param int $userid
-     * @return stdClass
-     * @throws dml_exception
+     * @return \stdClass
+     * @throws \dml_exception
      */
-    static private function create_prevlogin(int $userid): \stdClass {
+    private static function create_prevlogin(int $userid): \stdClass {
         global $DB;
         $record = new stdClass();
         $record->userid = $userid;
@@ -296,5 +299,4 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
         $record->id = $DB->insert_record('auth_azureb2c_prevlogin', $record);
         return $record;
     }
-
 }

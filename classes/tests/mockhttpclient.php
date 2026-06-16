@@ -23,6 +23,8 @@
 
 namespace auth_azureb2c\tests;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * A mock HTTP client allowing set responses.
  */
