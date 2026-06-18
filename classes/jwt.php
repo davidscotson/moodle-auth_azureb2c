@@ -23,6 +23,8 @@
 
 namespace auth_azureb2c;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Class for working with JWTs.
  */
