@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Azure AD B2C authentication plugin main class file.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -41,6 +43,8 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
 
     /**
      * Constructor.
+     *
+     * @param string $forceloginflow The login flow to force.
      */
     public function __construct($forceloginflow = null) {
         global $STATEADDITIONALDATA;
@@ -116,6 +120,8 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
      *                                "linked" account.
      * @param \moodle_url $redirect Where to redirect if successful.
      * @param \moodle_url $selfurl The page this is accessed from. Used for some redirects.
+     * @param int $userid The ID of the user to disconnect.
+     * @return bool
      */
     public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
                                \moodle_url $selfurl = null, $userid = null) {
