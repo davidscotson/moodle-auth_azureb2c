@@ -84,18 +84,17 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
     /**
      * Set an HTTP client to use.
      *
-     * @param auth_azureb2chttpclientinterface $httpclient [description]
+     * @param \auth_azureb2c\httpclientinterface $httpclient The HTTP client.
      */
-    public function set_httpclient(\auth_azureb2c\httpclientinterface $httpclient) {
-        return $this->loginflow->set_httpclient($httpclient);
+    public function set_httpclient(\auth_azureb2c\httpclientinterface $httpclient): void {
+        $this->loginflow->set_httpclient($httpclient);
     }
 
     /**
      * Hook for overriding behaviour of login page.
      * This method is called from login/index.php page for all enabled auth plugins.
      *
-     * @global object
-     * @global object
+     * @return bool
      */
     public function loginpage_hook() {
         global $frm;  // can be used to override submitted login form
@@ -123,8 +122,13 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
      * @param int $userid The ID of the user to disconnect.
      * @return bool
      */
-    public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
-                               \moodle_url $selfurl = null, $userid = null) {
+    public function disconnect(
+        $justremovetokens = false,
+        $donotremovetokens = false,
+        \moodle_url $redirect = null,
+        \moodle_url $selfurl = null,
+        $userid = null
+    ) {
         return $this->loginflow->disconnect($justremovetokens, $donotremovetokens, $redirect, $selfurl, $userid);
     }
 
