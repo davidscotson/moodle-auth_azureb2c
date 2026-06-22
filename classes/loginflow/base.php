@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Azure AD B2C login flow base class.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,6 +24,8 @@
  */
 
 namespace auth_azureb2c\loginflow;
+
+defined('MOODLE_INTERNAL') || die();
 
 class base {
     /** @var object Plugin config. */
@@ -75,8 +79,9 @@ class base {
     /**
      * Provides a hook into the login page.
      *
-     * @param object &$frm Form object.
-     * @param object &$user User object.
+     * @param object $frm Form object.
+     * @param object $user User object.
+     * @return bool
      */
     public function loginpage_hook(&$frm, &$user) {
         return true;
@@ -190,7 +195,7 @@ class base {
     /**
      * Set an HTTP client to use.
      *
-     * @param auth_azureb2chttpclientinterface $httpclient [description]
+     * @param \auth_azureb2c\httpclientinterface $httpclient The HTTP client.
      */
     public function set_httpclient(\auth_azureb2c\httpclientinterface $httpclient) {
         $this->httpclient = $httpclient;
@@ -202,8 +207,9 @@ class base {
      * @param bool $justremovetokens If true, just remove the stored azureb2c tokens for the user, otherwise revert login methods.
      * @param bool $donotremovetokens If true, do not remove tokens when disconnecting. This migrates from a login account to a
      *                                "linked" account.
-     * @param \moodle_url $redirect Where to redirect if successful.
-     * @param \moodle_url $selfurl The page this is accessed from. Used for some redirects.
+     * @param \moodle_url|null $redirect Where to redirect if successful.
+     * @param \moodle_url|null $selfurl The page this is accessed from. Used for some redirects.
+     * @param int|null $userid The user ID.
      */
     public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
                                \moodle_url $selfurl = null, $userid = null) {
@@ -479,10 +485,11 @@ class base {
      * Create a token for a user, thus linking a Moodle user to an Azure AD B2C Connect user.
      *
      * @param string $azureb2cuniqid A unique identifier for the user.
-     * @param array $username The username of the Moodle user to link to.
+     * @param string $username The username of the Moodle user to link to.
      * @param array $authparams Parameters receieved from the auth request.
      * @param array $tokenparams Parameters received from the token request.
      * @param \auth_azureb2c\jwt $idtoken A JWT object representing the received id_token.
+     * @param int $userid The user ID.
      * @return \stdClass The created token database record.
      */
     protected function createtoken($azureb2cuniqid, $username, $authparams, $tokenparams, \auth_azureb2c\jwt $idtoken, $userid = 0) {

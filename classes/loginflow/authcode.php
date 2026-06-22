@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Azure AD B2C authcode login flow.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,6 +24,8 @@
  */
 
 namespace auth_azureb2c\loginflow;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Login flow for the oauth2 authorization code grant.
@@ -208,7 +212,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
         $orignonce = $staterec->nonce;
         $additionaldata = [];
         if (!empty($staterec->additionaldata)) {
-            $additionaldata = @unserialize($staterec->additionaldata);
+            $additionaldata = @unserialize($staterec->additionaldata, ['allowed_classes' => false]);
             if (!is_array($additionaldata)) {
                 $additionaldata = [];
             }
@@ -294,6 +298,8 @@ class authcode extends \auth_azureb2c\loginflow\base {
      * @param array $tokenparams Parameters received from the token request.
      * @param \auth_azureb2c\jwt $idtoken A JWT object representing the received id_token.
      * @param bool $connectiononly Whether to just connect the user (true), or to connect and change login method (false).
+     * @return bool
+     * @throws \moodle_exception
      */
     protected function handlemigration($azureb2cuniqid, $authparams, $tokenparams, $idtoken, $connectiononly = false) {
         global $USER, $DB, $CFG;
@@ -381,7 +387,8 @@ class authcode extends \auth_azureb2c\loginflow\base {
     /**
      * Determines whether the given Azure AD UPN is already matched to a Moodle user (and has not been completed).
      *
-     * @return false|stdClass Either the matched Moodle user record, or false if not matched.
+     * @param string $entraidupn Entra ID UPN.
+     * @return false|\stdClass Either the matched Moodle user record, or false if not matched.
      */
     protected function check_for_matched($entraidupn) {
         global $DB;
@@ -424,6 +431,8 @@ class authcode extends \auth_azureb2c\loginflow\base {
      * @param array $authparams Parameters receieved from the auth request.
      * @param array $tokenparams Parameters received from the token request.
      * @param \auth_azureb2c\jwt $idtoken A JWT object representing the received id_token.
+     * @return bool
+     * @throws \moodle_exception
      */
     protected function handlelogin($azureb2cuniqid, $authparams, $tokenparams, $idtoken) {
         global $DB, $CFG;
