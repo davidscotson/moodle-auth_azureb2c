@@ -15,6 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Azure AD B2C client tests.
+ *
+ * Azure AD B2C JWT tests.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -103,6 +107,8 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
      * Test setting and getting endpoints.
      *
      * @dataProvider dataprovider_endpoints
+     * @param array $endpoints Endpoints.
+     * @param array $expectedexception Expected exception.
      */
     public function test_endpoints_getters_and_setters($endpoints, $expectedexception): void {
         if (!empty($expectedexception)) {
