@@ -60,7 +60,7 @@ class jwt {
             throw new \moodle_exception('errorjwtinvalidheader', 'auth_azureb2c');
         }
 
-        $jwsalgs = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'none'];
+        $jwsalgs = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512'];
         if (in_array($header['alg'], $jwsalgs, true) === true) {
             $body = static::decode_jws($jwtparts);
         } else {
@@ -97,7 +97,7 @@ class jwt {
      */
     public static function instance_from_encoded($encoded) {
         list($header, $body) = static::decode($encoded);
-        $jwt = new static;
+        $jwt = new static();
         $jwt->set_header($header);
         $jwt->set_claims($body);
         return $jwt;

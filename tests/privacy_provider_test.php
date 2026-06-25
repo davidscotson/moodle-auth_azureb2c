@@ -264,7 +264,7 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
      */
     static private function create_token(int $userid): \stdClass {
         global $DB;
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->azureb2cuniqid = "user@example.com";
         $record->username = "user@example.com";
         $record->userid = $userid;
@@ -289,7 +289,7 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
      */
     static private function create_prevlogin(int $userid): \stdClass {
         global $DB;
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->userid = $userid;
         $record->method = "manual";
         $record->password = "abc123";

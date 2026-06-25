@@ -29,8 +29,8 @@ namespace auth_azureb2c\loginflow;
 class rocreds extends \auth_azureb2c\loginflow\base {
     /**
      * Check for an existing user object.
-     * @param string $azureb2cuniqid The user object ID to look up.
-     * @param string $username The original username.
+     *
+     * @param string $o356username The Office 365 username.
      * @return string If there is an existing user object, return the username associated with it.
      *                If there is no existing user object, return the original username.
      */
@@ -52,8 +52,9 @@ class rocreds extends \auth_azureb2c\loginflow\base {
     /**
      * Provides a hook into the login page.
      *
-     * @param object &$frm Form object.
-     * @param object &$user User object.
+     * @param object $frm Form object.
+     * @param object $user User object.
+     * @return bool
      */
     public function loginpage_hook(&$frm, &$user) {
         global $DB;
