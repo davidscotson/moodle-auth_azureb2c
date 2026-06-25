@@ -32,6 +32,7 @@ class utils {
      * Process an azureb2c JSON response.
      *
      * @param string $response The received JSON.
+     * @param array $expectedstructure The expected JSON structure.
      * @return array The parsed JSON.
      */
     public static function process_json_response($response, array $expectedstructure = array()) {
@@ -111,6 +112,8 @@ class utils {
      * Record a debug message.
      *
      * @param string $message The debug message to log.
+     * @param string $where Where the debug message was triggered.
+     * @param mixed $debugdata The data to include in the debug message.
      */
     public static function debug($message, $where = '', $debugdata = null) {
         $debugmode = (bool)get_config('auth_azureb2c', 'debugmode');

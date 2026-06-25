@@ -30,11 +30,18 @@ class mockazureb2cclient extends \auth_azureb2c\azureb2cclient {
     /** @var \auth_azureb2c\httpclientinterface An HTTP client to use. */
     public $httpclient;
 
+    /** @var string The resource URI. */
+    protected $resource;
+
     /** @var array Array of endpoints. */
     public $endpoints = [];
 
     /**
      * Stub method to access protected parent method.
+     *
+     * @param string $nonce The nonce.
+     * @param array $stateparams The state parameters.
+     * @return string
      */
     public function getnewstate($nonce, array $stateparams = array()) {
         return parent::getnewstate($nonce, $stateparams);
