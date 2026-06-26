@@ -21,6 +21,8 @@
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 function auth_azureb2c_initialize_customicon($filefullname) {
     global $CFG;
     $file = get_config('auth_azureb2c', 'customicon');

@@ -21,6 +21,8 @@
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once(__DIR__.'/lib.php');
 
 $configkey = new lang_string('cfg_scope_key', 'auth_azureb2c');
