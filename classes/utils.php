@@ -32,7 +32,9 @@ class utils {
      * Process an azureb2c JSON response.
      *
      * @param string $response The received JSON.
+     * @param array $expectedstructure The expected structure.
      * @return array The parsed JSON.
+     * @throws \moodle_exception
      */
     public static function process_json_response($response, array $expectedstructure = array()) {
         $backtrace = debug_backtrace(0);
@@ -111,6 +113,8 @@ class utils {
      * Record a debug message.
      *
      * @param string $message The debug message to log.
+     * @param string $where Where the debug message was recorded.
+     * @param mixed $debugdata The debug data.
      */
     public static function debug($message, $where = '', $debugdata = null) {
         $debugmode = (bool)get_config('auth_azureb2c', 'debugmode');

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Authorization code login flow for the Azure AD B2C authentication plugin.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -74,6 +76,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
      * @param string $name The name of the parameter.
      * @param string $fallback The fallback value.
      * @return string The parameter value, or fallback.
+     * @throws \moodle_exception If authorization error.
      */
     protected function getazureb2cparam($name, $fallback = '') {
         $val = optional_param($name, $fallback, PARAM_RAW);
@@ -170,9 +173,10 @@ class authcode extends \auth_azureb2c\loginflow\base {
      * Handle an authorization request response received from the configured OP.
      *
      * @param array $authparams Received parameters.
+     * @throws \moodle_exception If authorization error.
      */
     protected function handleauthresponse(array $authparams) {
-        global $DB, $CFG, $STATEADDITIONALDATA, $USER;
+        global $DB, $CFG, $stateadditionaldata, $USER;
 
         if (!empty($authparams['error_description'])) {
             // AADB2C90091 user cancel error code
@@ -215,7 +219,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
                 $additionaldata = [];
             }
         }
-        $STATEADDITIONALDATA = $additionaldata;
+        $stateadditionaldata = $additionaldata;
         $DB->delete_records('auth_azureb2c_state', ['id' => $staterec->id]);
 
         // Get token from auth code.
@@ -265,8 +269,8 @@ class authcode extends \auth_azureb2c\loginflow\base {
             if (!empty($userrec)) {
                 if (empty($additionaldata['redirect'])) {
                     $redirect = '/auth/azureb2c/ucp.php?o365accountconnected=true';
-                } else if ($additionaldata['redirect'] == '/local/o365/ucp.php') {
-                    $redirect = $additionaldata['redirect'].'?action=connection&o365accountconnected=true';
+                } elseif ($additionaldata['redirect'] === '/local/o365/ucp.php') {
+                    $redirect = $additionaldata['redirect'] . '?action=connection&o365accountconnected=true';
                 } else {
                     throw new \moodle_exception('errorinvalidredirect_message', 'auth_azureb2c');
                 }
@@ -296,6 +300,8 @@ class authcode extends \auth_azureb2c\loginflow\base {
      * @param array $tokenparams Parameters received from the token request.
      * @param \auth_azureb2c\jwt $idtoken A JWT object representing the received id_token.
      * @param bool $connectiononly Whether to just connect the user (true), or to connect and change login method (false).
+     * @return bool True if successful.
+     * @throws \moodle_exception If authorization error.
      */
     protected function handlemigration($azureb2cuniqid, $authparams, $tokenparams, $idtoken, $connectiononly = false) {
         global $USER, $DB, $CFG;
@@ -381,9 +387,10 @@ class authcode extends \auth_azureb2c\loginflow\base {
     }
 
     /**
-     * Determines whether the given Azure AD UPN is already matched to a Moodle user (and has not been completed).
+     * Check for matched user.
      *
-     * @return false|stdClass Either the matched Moodle user record, or false if not matched.
+     * @param string $entraidupn The Entra ID UPN.
+     * @return bool|\stdClass The user record if found.
      */
     protected function check_for_matched($entraidupn) {
         global $DB;
@@ -426,6 +433,8 @@ class authcode extends \auth_azureb2c\loginflow\base {
      * @param array $authparams Parameters receieved from the auth request.
      * @param array $tokenparams Parameters received from the token request.
      * @param \auth_azureb2c\jwt $idtoken A JWT object representing the received id_token.
+     * @return bool True if successful.
+     * @throws \moodle_exception If authorization error.
      */
     protected function handlelogin($azureb2cuniqid, $authparams, $tokenparams, $idtoken) {
         global $DB, $CFG;

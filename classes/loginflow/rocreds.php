@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Resource owner credentials login flow for the Azure AD B2C authentication plugin.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -29,10 +31,9 @@ namespace auth_azureb2c\loginflow;
 class rocreds extends \auth_azureb2c\loginflow\base {
     /**
      * Check for an existing user object.
-     * @param string $azureb2cuniqid The user object ID to look up.
-     * @param string $username The original username.
-     * @return string If there is an existing user object, return the username associated with it.
-     *                If there is no existing user object, return the original username.
+     *
+     * @param string $o356username The O365 username.
+     * @return string The original or mapped username.
      */
     protected function check_objects($o356username) {
         global $DB;
@@ -52,8 +53,9 @@ class rocreds extends \auth_azureb2c\loginflow\base {
     /**
      * Provides a hook into the login page.
      *
-     * @param object &$frm Form object.
-     * @param object &$user User object.
+     * @param object|null &$frm Form object.
+     * @param object|null &$user User object.
+     * @return bool|void
      */
     public function loginpage_hook(&$frm, &$user) {
         global $DB;
