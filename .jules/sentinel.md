@@ -1,0 +1,4 @@
+## 2025-05-15 - Security Hardening of JWT and Unserialization
+**Vulnerability:** The JWT implementation allowed the 'none' algorithm, which could lead to signature bypass. Additionally, `unserialize()` was used without restricting classes, making the application vulnerable to PHP Object Injection if the state data was tampered with.
+**Learning:** Legacy Moodle plugins often lack modern security hardening like `allowed_classes => false` in `unserialize` and explicit JWT algorithm whitelisting that excludes 'none'. Direct access checks (`MOODLE_INTERNAL`) are also frequently missing in class files that are technically outside the web root but accessible if the server configuration is weak.
+**Prevention:** Always explicitly whitelist only the required cryptographic algorithms for JWT. When using `unserialize`, default to `allowed_classes => false` unless objects are strictly required. Ensure all PHP files in Moodle plugins start with the `MOODLE_INTERNAL` check.
