@@ -42,6 +42,9 @@ class azureb2cclient {
     /** @var array Array of endpoints. */
     protected $endpoints = [];
 
+    /** @var string The resource. */
+    protected $resource;
+
     /**
      * Constructor.
      *
@@ -57,6 +60,7 @@ class azureb2cclient {
      * @param string $id The registered client ID.
      * @param string $secret The registered client secret.
      * @param string $redirecturi The registered client redirect URI.
+     * @param string|null $resource The resource.
      */
     public function setcreds($id, $secret, $redirecturi, $resource) {
         $this->clientid = $id;
@@ -158,11 +162,12 @@ class azureb2cclient {
      * Generate a new state parameter.
      *
      * @param string $nonce The generated nonce value.
+     * @param array $stateparams The state parameters.
      * @return string The new state value.
      */
     protected function getnewstate($nonce, array $stateparams = array()) {
         global $DB;
-        $staterec = new \stdClass;
+        $staterec = new \stdClass();
         $staterec->sesskey = sesskey();
         $staterec->state = random_string(15);
         $staterec->nonce = $nonce;
@@ -232,9 +237,9 @@ class azureb2cclient {
     /**
      * Exchange an authorization code for an access token.
      *
-     * @param string $tokenendpoint The token endpoint URI.
      * @param string $code An authorization code.
      * @return array Received parameters.
+     * @throws \moodle_exception If token request fails.
      */
     public function tokenrequest($code) {
         if (empty($this->endpoints['token'])) {

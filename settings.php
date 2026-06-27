@@ -15,13 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Settings for the Azure AD B2C authentication plugin.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
-require_once(__DIR__.'/lib.php');
+defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__ . '/lib.php');
 
 $configkey = new lang_string('cfg_scope_key', 'auth_azureb2c');
 $configdesc = new lang_string('cfg_scope_desc', 'auth_azureb2c');
@@ -44,17 +48,35 @@ $settings->add(new admin_setting_configtext('auth_azureb2c/clientsecret', $confi
 $configkey = new lang_string('cfg_authendpoint_key', 'auth_azureb2c');
 $configdesc = new lang_string('cfg_authendpoint_desc', 'auth_azureb2c');
 $configdefault = 'https://tenantname.b2clogin.com/common/oauth2/authorize?p=signinandsignup_policy_name';
-$settings->add(new admin_setting_configtext('auth_azureb2c/authendpoint', $configkey, $configdesc, $configdefault, PARAM_TEXT));
+$settings->add(new admin_setting_configtext(
+    'auth_azureb2c/authendpoint',
+    $configkey,
+    $configdesc,
+    $configdefault,
+    PARAM_TEXT
+));
 
 $configkey = new lang_string('cfg_resetpassendpoint_key', 'auth_azureb2c');
 $configdesc = new lang_string('cfg_resetpassendpoint_desc', 'auth_azureb2c');
 $configdefault = "https://tenantname.b2clogin.com/common/oauth2/authorize?p=reset_policy_name";
-$settings->add(new admin_setting_configtext('auth_azureb2c/resetpassendpoint', $configkey, $configdesc, $configdefault, PARAM_TEXT));
+$settings->add(new admin_setting_configtext(
+    'auth_azureb2c/resetpassendpoint',
+    $configkey,
+    $configdesc,
+    $configdefault,
+    PARAM_TEXT
+));
 
 $configkey = new lang_string('cfg_editprofileendpoint_key', 'auth_azureb2c');
 $configdesc = new lang_string('cfg_editprofileendpoint_desc', 'auth_azureb2c');
 $configdefault = "https://tenantname.b2clogin.com/common/oauth2/authorize?p=edit_policy_name";
-$settings->add(new admin_setting_configtext('auth_azureb2c/editprofileendpoint', $configkey, $configdesc, $configdefault, PARAM_TEXT));
+$settings->add(new admin_setting_configtext(
+    'auth_azureb2c/editprofileendpoint',
+    $configkey,
+    $configdesc,
+    $configdefault,
+    PARAM_TEXT
+));
 
 $configkey = new lang_string('cfg_tokenendpoint_key', 'auth_azureb2c');
 $configdesc = new lang_string('cfg_tokenendpoint_desc', 'auth_azureb2c');
@@ -83,12 +105,23 @@ $settings->add(new admin_setting_configtext('auth_azureb2c/domainhint', $configk
 $configkey = new lang_string('cfg_loginflow_key', 'auth_azureb2c');
 $configdesc = '';
 $configdefault = 'authcode';
-$settings->add(new \auth_azureb2c\form\adminsetting\loginflow('auth_azureb2c/loginflow', $configkey, $configdesc, $configdefault));
+$settings->add(new \auth_azureb2c\form\adminsetting\loginflow(
+    'auth_azureb2c/loginflow',
+    $configkey,
+    $configdesc,
+    $configdefault
+));
 
 $configkey = new lang_string('cfg_userrestrictions_key', 'auth_azureb2c');
 $configdesc = new lang_string('cfg_userrestrictions_desc', 'auth_azureb2c');
 $configdefault = '';
-$settings->add(new admin_setting_configtextarea('auth_azureb2c/userrestrictions', $configkey, $configdesc, $configdefault, PARAM_TEXT));
+$settings->add(new admin_setting_configtextarea(
+    'auth_azureb2c/userrestrictions',
+    $configkey,
+    $configdesc,
+    $configdefault,
+    PARAM_TEXT
+));
 
 $label = new lang_string('cfg_debugmode_key', 'auth_azureb2c');
 $desc = new lang_string('cfg_debugmode_desc', 'auth_azureb2c');

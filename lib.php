@@ -15,12 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Library functions for the Azure AD B2C authentication plugin.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
+/**
+ * Initialize custom icon.
+ *
+ * @param string $filefullname
+ */
 function auth_azureb2c_initialize_customicon($filefullname) {
     global $CFG;
     $file = get_config('auth_azureb2c', 'customicon');
@@ -28,21 +35,22 @@ function auth_azureb2c_initialize_customicon($filefullname) {
     $fullpath = "/{$systemcontext->id}/auth_azureb2c/customicon/0{$file}";
 
     $fs = get_file_storage();
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+    $file = $fs->get_file_by_hash(sha1($fullpath));
+    if (!$file || $file->is_directory()) {
         return false;
     }
     $pixpluginsdir = 'pix_plugins/auth/azureb2c/0';
     $pixpluginsdirparts = explode('/', $pixpluginsdir);
     $curdir = $CFG->dataroot;
     foreach ($pixpluginsdirparts as $dir) {
-        $curdir .= '/'.$dir;
+        $curdir .= '/' . $dir;
         if (!file_exists($curdir)) {
             mkdir($curdir);
         }
     }
 
-    if (file_exists($CFG->dataroot.'/pix_plugins/auth/azureb2c/0')) {
-        $file->copy_content_to($CFG->dataroot.'/pix_plugins/auth/azureb2c/0/customicon.jpg');
+    if (file_exists($CFG->dataroot . '/pix_plugins/auth/azureb2c/0')) {
+        $file->copy_content_to($CFG->dataroot . '/pix_plugins/auth/azureb2c/0/customicon.jpg');
         theme_reset_all_caches();
     }
 }

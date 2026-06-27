@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Authentication plugin for Azure AD B2C.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,8 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/authlib.php');
-require_once($CFG->dirroot.'/login/lib.php');
+require_once($CFG->libdir . '/authlib.php');
+require_once($CFG->dirroot . '/login/lib.php');
 
 /**
  * Azure AD B2C Connect Authentication Plugin.
@@ -43,11 +45,11 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
      * Constructor.
      */
     public function __construct($forceloginflow = null) {
-        global $STATEADDITIONALDATA;
+        global $stateadditionaldata;
         $loginflow = 'authcode';
 
-        if (!empty($STATEADDITIONALDATA) && isset($STATEADDITIONALDATA['forceflow'])) {
-            $loginflow = $STATEADDITIONALDATA['forceflow'];
+        if (!empty($stateadditionaldata) && isset($stateadditionaldata['forceflow'])) {
+            $loginflow = $stateadditionaldata['forceflow'];
         } else {
             if (!empty($forceloginflow) && is_string($forceloginflow)) {
                 $loginflow = $forceloginflow;
@@ -58,7 +60,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
                 }
             }
         }
-        $loginflowclass = '\auth_azureb2c\loginflow\\'.$loginflow;
+        $loginflowclass = '\auth_azureb2c\loginflow\\' . $loginflow;
         if (class_exists($loginflowclass)) {
             $this->loginflow = new $loginflowclass($this->config);
         } else {
@@ -112,13 +114,18 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
      * Handle azureb2c disconnection from Moodle account.
      *
      * @param bool $justremovetokens If true, just remove the stored azureb2c tokens for the user, otherwise revert login methods.
-     * @param bool $donotremovetokens If true, do not remove tokens when disconnecting. This migrates from a login account to a
-     *                                "linked" account.
-     * @param \moodle_url $redirect Where to redirect if successful.
-     * @param \moodle_url $selfurl The page this is accessed from. Used for some redirects.
+     * @param bool $donotremovetokens If true, do not remove tokens when disconnecting.
+     * @param \moodle_url|null $redirect Where to redirect if successful.
+     * @param \moodle_url|null $selfurl The page this is accessed from. Used for some redirects.
+     * @param int|null $userid The user ID.
      */
-    public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
-                               \moodle_url $selfurl = null, $userid = null) {
+    public function disconnect(
+        $justremovetokens = false,
+        $donotremovetokens = false,
+        \moodle_url $redirect = null,
+        \moodle_url $selfurl = null,
+        $userid = null
+    ) {
         return $this->loginflow->disconnect($justremovetokens, $donotremovetokens, $redirect, $selfurl, $userid);
     }
 
@@ -184,7 +191,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
             if (!empty($tokenrec)) {
                 // If the token record username is out of sync (ie username changes), update it.
                 if ($tokenrec->username != $user->username) {
-                    $updatedtokenrec = new \stdClass;
+                    $updatedtokenrec = new \stdClass();
                     $updatedtokenrec->id = $tokenrec->id;
                     $updatedtokenrec->username = $user->username;
                     $DB->update_record('auth_azureb2c_token', $updatedtokenrec);
@@ -196,7 +203,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
                 $tokenrec = $DB->get_record('auth_azureb2c_token', ['username' => $username]);
                 if (!empty($tokenrec)) {
                     $tokenrec->userid = $user->id;
-                    $updatedtokenrec = new \stdClass;
+                    $updatedtokenrec = new \stdClass();
                     $updatedtokenrec->id = $tokenrec->id;
                     $updatedtokenrec->userid = $user->id;
                     $DB->update_record('auth_azureb2c_token', $updatedtokenrec);
