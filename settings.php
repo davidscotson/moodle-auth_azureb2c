@@ -15,11 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Plugin settings.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/lib.php');
 
@@ -68,7 +72,7 @@ $settings->add(new admin_setting_configtext('auth_azureb2c/azureb2cresource', $c
 
 $configkey = new lang_string('cfg_redirecturi_key', 'auth_azureb2c');
 $configdesc = new lang_string('cfg_redirecturi_desc', 'auth_azureb2c');
-$settings->add(new \auth_azureb2c\form\adminsetting\redirecturi('auth_azureb2c/redirecturi', $configkey, $configdesc));
+$settings->add(new \auth_azureb2c\form\adminsetting\redirecturi()('auth_azureb2c/redirecturi', $configkey, $configdesc));
 
 $configkey = new lang_string('cfg_autoappend_key', 'auth_azureb2c');
 $configdesc = new lang_string('cfg_autoappend_desc', 'auth_azureb2c');
@@ -83,7 +87,7 @@ $settings->add(new admin_setting_configtext('auth_azureb2c/domainhint', $configk
 $configkey = new lang_string('cfg_loginflow_key', 'auth_azureb2c');
 $configdesc = '';
 $configdefault = 'authcode';
-$settings->add(new \auth_azureb2c\form\adminsetting\loginflow('auth_azureb2c/loginflow', $configkey, $configdesc, $configdefault));
+$settings->add(new \auth_azureb2c\form\adminsetting\loginflow()('auth_azureb2c/loginflow', $configkey, $configdesc, $configdefault));
 
 $configkey = new lang_string('cfg_userrestrictions_key', 'auth_azureb2c');
 $configdesc = new lang_string('cfg_userrestrictions_desc', 'auth_azureb2c');
@@ -179,7 +183,7 @@ $icons = [
         'component' => 'moodle',
     ],
 ];
-$settings->add(new \auth_azureb2c\form\adminsetting\iconselect('auth_azureb2c/icon', $configkey, $configdesc, $configdefault, $icons));
+$settings->add(new \auth_azureb2c\form\adminsetting\iconselect()('auth_azureb2c/icon', $configkey, $configdesc, $configdefault, $icons));
 
 $configkey = new lang_string('cfg_customicon_key', 'auth_azureb2c');
 $configdesc = new lang_string('cfg_customicon_desc', 'auth_azureb2c');

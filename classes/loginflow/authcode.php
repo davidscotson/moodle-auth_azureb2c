@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Auth code login flow.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -172,7 +174,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
      * @param array $authparams Received parameters.
      */
     protected function handleauthresponse(array $authparams) {
-        global $DB, $CFG, $STATEADDITIONALDATA, $USER;
+        global $DB, $CFG, $stateadditionaldata, $USER;
 
         if (!empty($authparams['error_description'])) {
             // AADB2C90091 user cancel error code
@@ -183,7 +185,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
             } else if (strstr( $authparams['error_description'], 'AADB2C90118' )){
                 //AADB2C90118: The user has forgotten their password.
                 $lang = current_language();
-                $url = get_config('auth_azureb2c', 'resetpassendpoint')."&client_id=". get_config('auth_azureb2c', 'clientid')."&nonce=defaultNonce&redirect_uri=". $CFG->wwwroot."/auth/azureb2c/&scope=openid&response_type=code&prompt=login&ui_locales=$lang";
+                $url = get_config('auth_azureb2c', 'resetpassendpoint')."&client_id=". get_config('auth_azureb2c', 'clientid')."&nonce=defaultNonce&redirect_uri=". $CFG->wwwroot . "/auth/azureb2c/&scope=openid&response_type=code&prompt=login&ui_locales=$lang";
                 redirect($url);
             
             } else {
@@ -215,7 +217,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
                 $additionaldata = [];
             }
         }
-        $STATEADDITIONALDATA = $additionaldata;
+        $stateadditionaldata = $additionaldata;
         $DB->delete_records('auth_azureb2c_state', ['id' => $staterec->id]);
 
         // Get token from auth code.
@@ -383,7 +385,8 @@ class authcode extends \auth_azureb2c\loginflow\base {
     /**
      * Determines whether the given Azure AD UPN is already matched to a Moodle user (and has not been completed).
      *
-     * @return false|stdClass Either the matched Moodle user record, or false if not matched.
+     * @param string $entraidupn The Entra ID UPN to check.
+     * @return false|\stdClass Either the matched Moodle user record, or false if not matched.
      */
     protected function check_for_matched($entraidupn) {
         global $DB;

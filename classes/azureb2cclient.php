@@ -42,6 +42,9 @@ class azureb2cclient {
     /** @var array Array of endpoints. */
     protected $endpoints = [];
 
+    /** @var string The azureb2c resource. */
+    protected $resource;
+
     /**
      * Constructor.
      *
@@ -162,7 +165,7 @@ class azureb2cclient {
      */
     protected function getnewstate($nonce, array $stateparams = array()) {
         global $DB;
-        $staterec = new \stdClass;
+        $staterec = new \stdClass();
         $staterec->sesskey = sesskey();
         $staterec->state = random_string(15);
         $staterec->nonce = $nonce;

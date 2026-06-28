@@ -88,7 +88,7 @@ function xmldb_auth_azureb2c_upgrade($oldversion) {
 
                 // Populate token azureb2cusername.
                 if (empty($user->azureb2cusername)) {
-                    $updatedtoken = new \stdClass;
+                    $updatedtoken = new \stdClass();
                     $updatedtoken->id = $user->tokenid;
                     $updatedtoken->azureb2cusername = $azureb2cusername;
                     $DB->update_record('auth_azureb2c_token', $updatedtoken);
@@ -99,12 +99,12 @@ function xmldb_auth_azureb2c_upgrade($oldversion) {
                     // Old username, update to upn/sub.
                     if ($azureb2cusername != $user->username) {
                         // Update username.
-                        $updateduser = new \stdClass;
+                        $updateduser = new \stdClass();
                         $updateduser->id = $user->userid;
                         $updateduser->username = $azureb2cusername;
                         $DB->update_record('user', $updateduser);
 
-                        $updatedtoken = new \stdClass;
+                        $updatedtoken = new \stdClass();
                         $updatedtoken->id = $user->tokenid;
                         $updatedtoken->username = $azureb2cusername;
                         $DB->update_record('auth_azureb2c_token', $updatedtoken);
@@ -138,7 +138,7 @@ function xmldb_auth_azureb2c_upgrade($oldversion) {
         foreach ($authtokensrs as $authtokenrec) {
             $newusername = trim(\core_text::strtolower($authtokenrec->username));
             if ($newusername !== $authtokenrec->username) {
-                $updatedrec = new \stdClass;
+                $updatedrec = new \stdClass();
                 $updatedrec->id = $authtokenrec->id;
                 $updatedrec->username = $newusername;
                 $DB->update_record('auth_azureb2c_token', $updatedrec);
@@ -171,7 +171,7 @@ function xmldb_auth_azureb2c_upgrade($oldversion) {
                       JOIN {user} u ON u.username = tok.username';
             $records = $DB->get_recordset_sql($sql);
             foreach ($records as $record) {
-                $newrec = new \stdClass;
+                $newrec = new \stdClass();
                 $newrec->id = $record->id;
                 $newrec->userid = $record->userid;
                 $DB->update_record('auth_azureb2c_token', $newrec);

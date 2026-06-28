@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * JWT handling logic.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -99,7 +101,7 @@ class jwt {
      */
     public static function instance_from_encoded($encoded) {
         list($header, $body) = static::decode($encoded);
-        $jwt = new static;
+        $jwt = new static();
         $jwt->set_header($header);
         $jwt->set_claims($body);
         return $jwt;

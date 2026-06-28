@@ -41,13 +41,13 @@ if (!empty($action)) {
             throw new \moodle_exception('errorazureb2cnotenabled', 'auth_azureb2c');
         }
         auth_azureb2c_connectioncapability($USER->id, 'connect', true);
-        $auth = new \auth_azureb2c\loginflow\authcode;
+        $auth = new \auth_azureb2c\loginflow\authcode();
         $auth->set_httpclient(new \auth_azureb2c\httpclient());
         $auth->initiateauthrequest();
     } else if ($action === 'disconnectlogin' && $azureb2cloginconnected === true) {
         if (is_enabled_auth('manual') === true) {
             auth_azureb2c_connectioncapability($USER->id, 'disconnect', true);
-            $auth = new \auth_plugin_azureb2c;
+            $auth = new \auth_plugin_azureb2c();
             $auth->set_httpclient(new \auth_azureb2c\httpclient());
             $auth->disconnect();
         }
