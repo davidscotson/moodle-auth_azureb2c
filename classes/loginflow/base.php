@@ -270,7 +270,7 @@ class base {
                 'userid' => $userrec->id,
             ];
 
-            $mform = new \auth_azureb2c\form\disconnect()($selfurl, $customdata);
+            $mform = new \auth_azureb2c\form\disconnect($selfurl, $customdata);
 
             if ($mform->is_cancelled()) {
                 redirect($redirect);

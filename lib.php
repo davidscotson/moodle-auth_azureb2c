@@ -42,14 +42,14 @@ function auth_azureb2c_initialize_customicon($filefullname) {
     $pixpluginsdirparts = explode('/', $pixpluginsdir);
     $curdir = $CFG->dataroot;
     foreach ($pixpluginsdirparts as $dir) {
-        $curdir .= '/'.$dir;
+        $curdir .= '/' . $dir;
         if (!file_exists($curdir)) {
             mkdir($curdir);
         }
     }
 
-    if (file_exists($CFG->dataroot . ' . '/pix_plugins/auth/azureb2c/0')) {
-        $file->copy_content_to($CFG->dataroot . ' . '/pix_plugins/auth/azureb2c/0/customicon.jpg');
+    if (file_exists($CFG->dataroot . '/pix_plugins/auth/azureb2c/0')) {
+        $file->copy_content_to($CFG->dataroot . '/pix_plugins/auth/azureb2c/0/customicon.jpg');
         theme_reset_all_caches();
     }
 }

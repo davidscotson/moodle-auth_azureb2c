@@ -12,18 +12,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www . gnu.org/licenses/>.
 
 /**
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www . gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
-require_once(__DIR__.'/../../config.php');
-require_once(__DIR__.'/auth.php');
-require_once(__DIR__.'/lib.php');
+require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/auth.php');
+require_once(__DIR__ . '/lib.php');
 
 require_login();
 

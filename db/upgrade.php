@@ -12,12 +12,12 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www . gnu.org/licenses/>.
 
 /**
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www . gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
@@ -62,15 +62,15 @@ function xmldb_auth_azureb2c_upgrade($oldversion) {
 
     if ($result && $oldversion < 2015012704) {
         // Update azureb2c users.
-        $sql = 'SELECT u.id as userid,
-                       u.username as username,
-                       tok.id as tokenid,
-                       tok.azureb2cuniqid as azureb2cuniqid,
-                       tok.idtoken as idtoken,
-                       tok.azureb2cusername as azureb2cusername
+        $sql = 'SELECT u . id as userid,
+                       u . username as username,
+                       tok . id as tokenid,
+                       tok . azureb2cuniqid as azureb2cuniqid,
+                       tok . idtoken as idtoken,
+                       tok . azureb2cusername as azureb2cusername
                   FROM {auth_azureb2c_token} tok
-                  JOIN {user} u ON u.username = tok.username
-                 WHERE u.auth = ? AND deleted = ?';
+                  JOIN {user} u ON u . username = tok . username
+                 WHERE u . auth = ? AND deleted = ?';
         $params = ['azureb2c', 0];
         $userstoupdate = $DB->get_recordset_sql($sql, $params);
         foreach ($userstoupdate as $user) {
@@ -119,7 +119,7 @@ function xmldb_auth_azureb2c_upgrade($oldversion) {
 
     if ($result && $oldversion < 2015012707) {
         if (!$dbman->table_exists('auth_azureb2c_prevlogin')) {
-            $dbman->install_one_table_from_xmldb_file(__DIR__.'/install.xml', 'auth_azureb2c_prevlogin');
+            $dbman->install_one_table_from_xmldb_file(__DIR__ . '/install.xml', 'auth_azureb2c_prevlogin');
         }
         upgrade_plugin_savepoint($result, '2015012707', 'auth', 'azureb2c');
     }
@@ -132,7 +132,7 @@ function xmldb_auth_azureb2c_upgrade($oldversion) {
         upgrade_plugin_savepoint($result, '2015012710', 'auth', 'azureb2c');
     }
 
-    if ($result && $oldversion < 2015111904.01) {
+    if ($result && $oldversion < 2015111904 . 01) {
         // Ensure the username field in auth_azureb2c_token is lowercase.
         $authtokensrs = $DB->get_recordset('auth_azureb2c_token');
         foreach ($authtokensrs as $authtokenrec) {
@@ -144,31 +144,31 @@ function xmldb_auth_azureb2c_upgrade($oldversion) {
                 $DB->update_record('auth_azureb2c_token', $updatedrec);
             }
         }
-        upgrade_plugin_savepoint($result, '2015111904.01', 'auth', 'azureb2c');
+        upgrade_plugin_savepoint($result, '2015111904 . 01', 'auth', 'azureb2c');
     }
 
-    if ($result && $oldversion < 2015111905.01) {
+    if ($result && $oldversion < 2015111905 . 01) {
         // Update old endpoints.
         $config = get_config('auth_azureb2c');
-        if ($config->authendpoint === 'https://login.windows.net/common/oauth2/authorize') {
-            set_config('authendpoint', 'https://login.microsoftonline.com/common/oauth2/authorize', 'auth_azureb2c');
+        if ($config->authendpoint === 'https://login . windows.net/common/oauth2/authorize') {
+            set_config('authendpoint', 'https://login . microsoftonline.com/common/oauth2/authorize', 'auth_azureb2c');
         }
 
-        if ($config->tokenendpoint === 'https://login.windows.net/common/oauth2/token') {
-            set_config('tokenendpoint', 'https://login.microsoftonline.com/common/oauth2/token', 'auth_azureb2c');
+        if ($config->tokenendpoint === 'https://login . windows.net/common/oauth2/token') {
+            set_config('tokenendpoint', 'https://login . microsoftonline.com/common/oauth2/token', 'auth_azureb2c');
         }
 
-        upgrade_plugin_savepoint($result, '2015111905.01', 'auth', 'azureb2c');
+        upgrade_plugin_savepoint($result, '2015111905 . 01', 'auth', 'azureb2c');
     }
 
-    if ($result && $oldversion < 2018051700.01) {
+    if ($result && $oldversion < 2018051700 . 01) {
         $table = new xmldb_table('auth_azureb2c_token');
         $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'username');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
-            $sql = 'SELECT tok.id, tok.username, u.username, u.id as userid
+            $sql = 'SELECT tok . id, tok . username, u . username, u . id as userid
                       FROM {auth_azureb2c_token} tok
-                      JOIN {user} u ON u.username = tok.username';
+                      JOIN {user} u ON u . username = tok . username';
             $records = $DB->get_recordset_sql($sql);
             foreach ($records as $record) {
                 $newrec = new \stdClass();
@@ -177,7 +177,7 @@ function xmldb_auth_azureb2c_upgrade($oldversion) {
                 $DB->update_record('auth_azureb2c_token', $newrec);
             }
         }
-        upgrade_plugin_savepoint($result, '2018051700.01', 'auth', 'azureb2c');
+        upgrade_plugin_savepoint($result, '2018051700 . 01', 'auth', 'azureb2c');
     }
     return $result;
 }

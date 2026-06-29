@@ -12,12 +12,12 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www . gnu.org/licenses/>.
 
 /**
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www . gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
@@ -58,7 +58,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
                 }
             }
         }
-        $loginflowclass = '\auth_azureb2c\loginflow\\'.$loginflow;
+        $loginflowclass = '\auth_azureb2c\loginflow\\' . $loginflow;
         if (class_exists($loginflowclass)) {
             $this->loginflow = new $loginflowclass($this->config);
         } else {
