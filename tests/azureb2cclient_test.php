@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Azure B2C Client tests.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
+namespace auth_azureb2c;
 
 /**
  * Tests azureb2cclient.
@@ -31,7 +31,7 @@ global $CFG;
  * @group auth_azureb2c
  * @group office365
  */
-class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
+class azureb2cclient_test extends \advanced_testcase {
     /**
      * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.
      */
@@ -68,32 +68,32 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_endpoints(): array {
+    public static function dataprovider_endpoints(): array {
         $tests = [];
 
         $tests['oneinvalid'] = [
             ['auth' => 100],
-            ['Exception', 'Invalid Endpoint URI received.']
+            ['Exception', 'Invalid Endpoint URI received.'],
         ];
 
         $tests['oneinvalidonevalid1'] = [
             ['auth' => 100, 'token' => 'http://example.com/token'],
-            ['Exception', 'Invalid Endpoint URI received.']
+            ['Exception', 'Invalid Endpoint URI received.'],
         ];
 
         $tests['oneinvalidonevalid2'] = [
             ['token' => 'http://example.com/token', 'auth' => 100],
-            ['Exception', 'Invalid Endpoint URI received.']
+            ['Exception', 'Invalid Endpoint URI received.'],
         ];
 
         $tests['onevalid'] = [
             ['token' => 'http://example.com/token'],
-            []
+            [],
         ];
 
         $tests['twovalid'] = [
             ['auth' => 'http://example.com/auth', 'token' => 'http://example.com/token'],
-            []
+            [],
         ];
 
         return $tests;
@@ -102,6 +102,8 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
     /**
      * Test setting and getting endpoints.
      *
+     * @param array $endpoints The endpoints.
+     * @param array $expectedexception The expected exception.
      * @dataProvider dataprovider_endpoints
      */
     public function test_endpoints_getters_and_setters($endpoints, $expectedexception): void {

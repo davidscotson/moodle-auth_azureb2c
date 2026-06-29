@@ -31,11 +31,9 @@ class redirecturi extends \admin_setting {
     /**
      * Constructor.
      *
-     * @param string $name Name of the setting.
-     * @param string $visiblename Visible name of the setting.
-     * @param string $description Description of the setting.
-     * @param array $defaultsetting Default value.
-     * @param array $choices Array of icon choices.
+     * @param string $name The name.
+     * @param string $heading The heading.
+     * @param string $description The description.
      */
     public function __construct($name, $heading, $description) {
         $this->nosave = true;
@@ -61,18 +59,21 @@ class redirecturi extends \admin_setting {
     }
 
     /**
-     * Never write settings.
+     * Write setting.
      *
-     * @return string Always returns an empty string.
+     * @param string $data The data.
+     * @return bool
      */
     public function write_setting($data) {
         return '';
     }
 
     /**
-     * Returns an HTML string for the redirect uri display.
+     * Output HTML.
      *
-     * @return string Returns an HTML string.
+     * @param string $data The data.
+     * @param string $query The query.
+     * @return string
      */
     public function output_html($data, $query = '') {
         global $CFG;

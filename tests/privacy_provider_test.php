@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy test for auth_azureb2c
+ * Privacy provider tests.
  *
  * @package auth_azureb2c
  * @author Remote-Learner.net Inc
@@ -23,9 +23,9 @@
  * @copyright (C) 2019 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace auth_azureb2c;
 
-use \auth_azureb2c\privacy\provider;
+use auth_azureb2c\privacy\provider;
 
 /**
  * Privacy test for auth_azureb2c
@@ -35,12 +35,12 @@ use \auth_azureb2c\privacy\provider;
  * @group office365
  * @group office365_privacy
  */
-class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Tests set up.
      */
     public function setUp(): void {
-        global $CFG;
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
     }
@@ -74,7 +74,7 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
         $component = 'auth_azureb2c';
         // Create a user.
         $user = $this->getDataGenerator()->create_user();
-        $usercontext = context_user::instance($user->id);
+        $usercontext = \context_user::instance($user->id);
 
         // The list of users should not return anything yet (related data still haven't been created).
         $userlist = new \core_privacy\local\request\userlist($usercontext, $component);
@@ -93,7 +93,7 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
         $this->assertEquals($expected, $actual);
 
         // The list of users for system context should not return any users.
-        $userlist = new \core_privacy\local\request\userlist(context_system::instance(), $component);
+        $userlist = new \core_privacy\local\request\userlist(\context_system::instance(), $component);
         provider::get_users_in_context($userlist);
         $this->assertCount(0, $userlist);
     }
@@ -111,19 +111,19 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
 
         $writer = \core_privacy\local\request\writer::with_context($usercontext);
         $this->assertFalse($writer->has_any_data());
-        $approvedlist = new core_privacy\local\request\approved_contextlist($user, 'auth_azureb2c', [$usercontext->id]);
+        $approvedlist = new \core_privacy\local\request\approved_contextlist($user, 'auth_azureb2c', [$usercontext->id]);
         provider::export_user_data($approvedlist);
         // Token.
         $data = $writer->get_data([
             get_string('privacy:metadata:auth_azureb2c', 'auth_azureb2c'),
-            get_string('privacy:metadata:auth_azureb2c_token', 'auth_azureb2c')
+            get_string('privacy:metadata:auth_azureb2c_token', 'auth_azureb2c'),
         ]);
         $this->assertEquals($tokenrecord->userid, $data->userid);
         $this->assertEquals($tokenrecord->token, $data->token);
         // Previous login.
         $data = $writer->get_data([
             get_string('privacy:metadata:auth_azureb2c', 'auth_azureb2c'),
-            get_string('privacy:metadata:auth_azureb2c_prevlogin', 'auth_azureb2c')
+            get_string('privacy:metadata:auth_azureb2c_prevlogin', 'auth_azureb2c'),
         ]);
         $this->assertEquals($prevloginrecord->userid, $data->userid);
         $this->assertEquals($prevloginrecord->method, $data->method);
@@ -202,13 +202,13 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
         $component = 'auth_azureb2c';
         // Create user1.
         $user1 = $this->getDataGenerator()->create_user();
-        $usercontext1 = context_user::instance($user1->id);
+        $usercontext1 = \context_user::instance($user1->id);
         self::create_token($user1->id);
         self::create_prevlogin($user1->id);
 
         // Create user2.
         $user2 = $this->getDataGenerator()->create_user();
-        $usercontext2 = context_user::instance($user2->id);
+        $usercontext2 = \context_user::instance($user2->id);
         self::create_token($user2->id);
         self::create_prevlogin($user2->id);
 
@@ -244,7 +244,7 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
         $this->assertCount(1, $userlist2);
 
         // User data should be only removed in the user context.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         // Add userlist2 to the approved user list in the system context.
         $approvedlist = new \core_privacy\local\request\approved_userlist($systemcontext, $component, $userlist2->get_userids());
         // Delete user1 data using delete_data_for_user.
@@ -258,13 +258,12 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
     /**
      * Create a token record for the specified userid.
      *
-     * @param int $userid
-     * @return stdClass
-     * @throws dml_exception
+     * @param int $userid The user ID.
+     * @return \stdClass The created record.
      */
-    static private function create_token(int $userid): \stdClass {
+    protected static function create_token(int $userid): \stdClass {
         global $DB;
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->azureb2cuniqid = "user@example.com";
         $record->username = "user@example.com";
         $record->userid = $userid;
@@ -283,18 +282,16 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
     /**
      * Create a previous login record for the specified userid.
      *
-     * @param int $userid
-     * @return stdClass
-     * @throws dml_exception
+     * @param int $userid The user ID.
+     * @return \stdClass The created record.
      */
-    static private function create_prevlogin(int $userid): \stdClass {
+    protected static function create_prevlogin(int $userid): \stdClass {
         global $DB;
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->userid = $userid;
         $record->method = "manual";
         $record->password = "abc123";
         $record->id = $DB->insert_record('auth_azureb2c_prevlogin', $record);
         return $record;
     }
-
 }
