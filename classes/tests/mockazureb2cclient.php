@@ -33,8 +33,14 @@ class mockazureb2cclient extends \auth_azureb2c\azureb2cclient {
     /** @var array Array of endpoints. */
     public $endpoints = [];
 
+    /** @var string The azureb2c resource. */
+    public $resource;
+
     /**
      * Stub method to access protected parent method.
+     *
+     * @param string $nonce The nonce value.
+     * @param array $stateparams The state parameters.
      */
     public function getnewstate($nonce, array $stateparams = array()) {
         return parent::getnewstate($nonce, $stateparams);
