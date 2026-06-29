@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Azure AD B2C Connect Authentication Plugin.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,8 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/authlib.php');
-require_once($CFG->dirroot.'/login/lib.php');
+require_once($CFG->libdir . '/authlib.php');
+require_once($CFG->dirroot . '/login/lib.php');
 
 /**
  * Azure AD B2C Connect Authentication Plugin.
@@ -41,6 +43,8 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
 
     /**
      * Constructor.
+     *
+     * @param string $forceloginflow The login flow to use.
      */
     public function __construct($forceloginflow = null) {
         global $STATEADDITIONALDATA;
@@ -58,7 +62,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
                 }
             }
         }
-        $loginflowclass = '\auth_azureb2c\loginflow\\'.$loginflow;
+        $loginflowclass = '\auth_azureb2c\loginflow\\' . $loginflow;
         if (class_exists($loginflowclass)) {
             $this->loginflow = new $loginflowclass($this->config);
         } else {
@@ -80,7 +84,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
     /**
      * Set an HTTP client to use.
      *
-     * @param auth_azureb2chttpclientinterface $httpclient [description]
+     * @param \auth_azureb2c\httpclientinterface $httpclient An HTTP client to use.
      */
     public function set_httpclient(\auth_azureb2c\httpclientinterface $httpclient) {
         return $this->loginflow->set_httpclient($httpclient);
@@ -89,9 +93,6 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
     /**
      * Hook for overriding behaviour of login page.
      * This method is called from login/index.php page for all enabled auth plugins.
-     *
-     * @global object
-     * @global object
      */
     public function loginpage_hook() {
         global $frm;  // can be used to override submitted login form
@@ -111,11 +112,11 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
     /**
      * Handle azureb2c disconnection from Moodle account.
      *
-     * @param bool $justremovetokens If true, just remove the stored azureb2c tokens for the user, otherwise revert login methods.
-     * @param bool $donotremovetokens If true, do not remove tokens when disconnecting. This migrates from a login account to a
-     *                                "linked" account.
+     * @param bool $justremovetokens If true, just remove the stored azureb2c tokens for the user.
+     * @param bool $donotremovetokens If true, do not remove tokens when disconnecting.
      * @param \moodle_url $redirect Where to redirect if successful.
      * @param \moodle_url $selfurl The page this is accessed from. Used for some redirects.
+     * @param int $userid The user ID to disconnect.
      */
     public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
                                \moodle_url $selfurl = null, $userid = null) {
