@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Authentication plugin class.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,8 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/authlib.php');
-require_once($CFG->dirroot.'/login/lib.php');
+require_once($CFG->libdir . '/authlib.php');
+require_once($CFG->dirroot . '/login/lib.php');
 
 /**
  * Azure AD B2C Connect Authentication Plugin.
@@ -58,7 +60,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
                 }
             }
         }
-        $loginflowclass = '\auth_azureb2c\loginflow\\'.$loginflow;
+        $loginflowclass = '\auth_azureb2c\loginflow\\' . $loginflow;
         if (class_exists($loginflowclass)) {
             $this->loginflow = new $loginflowclass($this->config);
         } else {
@@ -184,7 +186,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
             if (!empty($tokenrec)) {
                 // If the token record username is out of sync (ie username changes), update it.
                 if ($tokenrec->username != $user->username) {
-                    $updatedtokenrec = new \stdClass;
+                    $updatedtokenrec = new \stdClass();
                     $updatedtokenrec->id = $tokenrec->id;
                     $updatedtokenrec->username = $user->username;
                     $DB->update_record('auth_azureb2c_token', $updatedtokenrec);
@@ -196,7 +198,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
                 $tokenrec = $DB->get_record('auth_azureb2c_token', ['username' => $username]);
                 if (!empty($tokenrec)) {
                     $tokenrec->userid = $user->id;
-                    $updatedtokenrec = new \stdClass;
+                    $updatedtokenrec = new \stdClass();
                     $updatedtokenrec->id = $tokenrec->id;
                     $updatedtokenrec->userid = $user->id;
                     $DB->update_record('auth_azureb2c_token', $updatedtokenrec);
