@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Client tests.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -31,7 +33,7 @@ global $CFG;
  * @group auth_azureb2c
  * @group office365
  */
-class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
+class azureb2cclient_test extends \advanced_testcase {
     /**
      * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.
      */
@@ -42,6 +44,12 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
 
     /**
      * Test getting and setting credentials.
+     *
+     * @covers \auth_azureb2c\azureb2cclient::setcreds
+     * @covers \auth_azureb2c\azureb2cclient::get_clientid
+     * @covers \auth_azureb2c\azureb2cclient::get_clientsecret
+     * @covers \auth_azureb2c\azureb2cclient::get_redirecturi
+     * @covers \auth_azureb2c\azureb2cclient::get_resource
      */
     public function test_creds_getters_and_setters(): void {
         $httpclient = new \auth_azureb2c\tests\mockhttpclient();
@@ -68,32 +76,32 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_endpoints(): array {
+    public static function dataprovider_endpoints(): array {
         $tests = [];
 
         $tests['oneinvalid'] = [
             ['auth' => 100],
-            ['Exception', 'Invalid Endpoint URI received.']
+            ['Exception', 'Invalid Endpoint URI received.'],
         ];
 
         $tests['oneinvalidonevalid1'] = [
             ['auth' => 100, 'token' => 'http://example.com/token'],
-            ['Exception', 'Invalid Endpoint URI received.']
+            ['Exception', 'Invalid Endpoint URI received.'],
         ];
 
         $tests['oneinvalidonevalid2'] = [
             ['token' => 'http://example.com/token', 'auth' => 100],
-            ['Exception', 'Invalid Endpoint URI received.']
+            ['Exception', 'Invalid Endpoint URI received.'],
         ];
 
         $tests['onevalid'] = [
             ['token' => 'http://example.com/token'],
-            []
+            [],
         ];
 
         $tests['twovalid'] = [
             ['auth' => 'http://example.com/auth', 'token' => 'http://example.com/token'],
-            []
+            [],
         ];
 
         return $tests;

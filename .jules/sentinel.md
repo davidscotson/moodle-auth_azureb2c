@@ -1,0 +1,4 @@
+## 2025-05-15 - JWT and Unserialize Hardening
+**Vulnerability:** The JWT implementation allowed the 'none' algorithm, which could permit signature bypass. Additionally, `unserialize()` was used on data from the database without restricting classes, potentially allowing PHP Object Injection if the database were compromised or if the state record could be manipulated.
+**Learning:** Custom JWT implementations often default to allowing the 'none' algorithm for testing or by omission, creating a severe bypass risk. Trusting internal database state with unrestricted `unserialize()` is a defense-in-depth failure.
+**Prevention:** Always explicitly whitelist only the required cryptographic algorithms for JWT. When using `unserialize()` on any data that isn't strictly controlled, use `['allowed_classes' => false]` or prefer `json_decode()`.
