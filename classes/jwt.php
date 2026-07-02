@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * JWT logic for auth_azureb2c.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,6 +24,8 @@
  */
 
 namespace auth_azureb2c;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class for working with JWTs.
@@ -39,6 +43,7 @@ class jwt {
      *
      * @param string $encoded Encoded JWT.
      * @return array Array of arrays of header and body parameters.
+     * @throws \moodle_exception
      */
     public static function decode($encoded) {
         if (empty($encoded) || !is_string($encoded)) {
@@ -60,7 +65,7 @@ class jwt {
             throw new \moodle_exception('errorjwtinvalidheader', 'auth_azureb2c');
         }
 
-        $jwsalgs = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'none'];
+        $jwsalgs = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512'];
         if (in_array($header['alg'], $jwsalgs, true) === true) {
             $body = static::decode_jws($jwtparts);
         } else {
@@ -97,7 +102,7 @@ class jwt {
      */
     public static function instance_from_encoded($encoded) {
         list($header, $body) = static::decode($encoded);
-        $jwt = new static;
+        $jwt = new static();
         $jwt->set_header($header);
         $jwt->set_claims($body);
         return $jwt;

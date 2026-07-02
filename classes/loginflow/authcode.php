@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Authcode login flow for auth_azureb2c.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,6 +24,8 @@
  */
 
 namespace auth_azureb2c\loginflow;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Login flow for the oauth2 authorization code grant.
@@ -60,7 +64,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
                 'url' => new \moodle_url('/auth/azureb2c/'),
                 'icon' => $icon,
                 'name' => $this->config->opname,
-            ]
+            ],
         ];
     }
 
@@ -165,25 +169,25 @@ class authcode extends \auth_azureb2c\loginflow\base {
     }
 
     /**
-     * Handle an authorization request response received from the configured OP.
+     * Handle auth response.
      *
      * @param array $authparams Received parameters.
      */
     protected function handleauthresponse(array $authparams) {
-        global $DB, $CFG, $STATEADDITIONALDATA, $USER;
+        global $DB, $CFG, $stateadditionaldata, $USER;
 
         if (!empty($authparams['error_description'])) {
-            // AADB2C90091 user cancel error code
-            if ( strstr( $authparams['error_description'], 'AADB2C90091' ) ) {
+            // AADB2C90091 user cancel error code.
+            if (strstr($authparams['error_description'], 'AADB2C90091')) {
                 redirect(new \moodle_url('/'));
-                //return;
-                //echo "Text found";
-            } else if (strstr( $authparams['error_description'], 'AADB2C90118' )){
-                //AADB2C90118: The user has forgotten their password.
+                // Return.
+                // echo "Text found".
+            } else if (strstr($authparams['error_description'], 'AADB2C90118')) {
+                // AADB2C90118: The user has forgotten their password.
                 $lang = current_language();
-                $url = get_config('auth_azureb2c', 'resetpassendpoint')."&client_id=". get_config('auth_azureb2c', 'clientid')."&nonce=defaultNonce&redirect_uri=". $CFG->wwwroot."/auth/azureb2c/&scope=openid&response_type=code&prompt=login&ui_locales=$lang";
+                $url = get_config('auth_azureb2c', 'resetpassendpoint') . "&client_id=" . get_config('auth_azureb2c', 'clientid') . "&nonce=defaultNonce&redirect_uri=" . $CFG->wwwroot . "/auth/azureb2c/&scope=openid&response_type=code&prompt=login&ui_locales=$lang";
                 redirect($url);
-            
+
             } else {
                 \auth_azureb2c\utils::debug('Authorization error.', 'authcode::handleauthresponse', $authparams);
                 throw new \moodle_exception('errorauthgeneral', 'auth_azureb2c');
@@ -208,12 +212,12 @@ class authcode extends \auth_azureb2c\loginflow\base {
         $orignonce = $staterec->nonce;
         $additionaldata = [];
         if (!empty($staterec->additionaldata)) {
-            $additionaldata = @unserialize($staterec->additionaldata);
+            $additionaldata = @unserialize($staterec->additionaldata, ['allowed_classes' => false]);
             if (!is_array($additionaldata)) {
                 $additionaldata = [];
             }
         }
-        $STATEADDITIONALDATA = $additionaldata;
+        $stateadditionaldata = $additionaldata;
         $DB->delete_records('auth_azureb2c_state', ['id' => $staterec->id]);
 
         // Get token from auth code.
@@ -241,7 +245,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
                     'authparams' => $authparams,
                     'tokenparams' => $tokenparams,
                     'statedata' => $additionaldata,
-                ]
+                ],
             ];
             $event = \auth_azureb2c\event\user_authed::create($eventdata);
             $event->trigger();
@@ -264,7 +268,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
                 if (empty($additionaldata['redirect'])) {
                     $redirect = '/auth/azureb2c/ucp.php?o365accountconnected=true';
                 } else if ($additionaldata['redirect'] == '/local/o365/ucp.php') {
-                    $redirect = $additionaldata['redirect'].'?action=connection&o365accountconnected=true';
+                    $redirect = $additionaldata['redirect'] . '?action=connection&o365accountconnected=true';
                 } else {
                     throw new \moodle_exception('errorinvalidredirect_message', 'auth_azureb2c');
                 }
@@ -381,6 +385,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
     /**
      * Determines whether the given Azure AD UPN is already matched to a Moodle user (and has not been completed).
      *
+     * @param string $entraidupn
      * @return false|stdClass Either the matched Moodle user record, or false if not matched.
      */
     protected function check_for_matched($entraidupn) {
@@ -424,6 +429,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
      * @param array $authparams Parameters receieved from the auth request.
      * @param array $tokenparams Parameters received from the token request.
      * @param \auth_azureb2c\jwt $idtoken A JWT object representing the received id_token.
+     * @return bool
      */
     protected function handlelogin($azureb2cuniqid, $authparams, $tokenparams, $idtoken) {
         global $DB, $CFG;
