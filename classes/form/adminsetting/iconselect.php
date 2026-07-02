@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Admin setting for icon select.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,6 +24,8 @@
  */
 
 namespace auth_azureb2c\form\adminsetting;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Choose an icon for the identity provider entry on the login page.
@@ -63,7 +67,7 @@ class iconselect extends \admin_setting {
         // Validate incoming data.
         $found = false;
         foreach ($this->choices as $icon) {
-            $id = $icon['component'].':'.$icon['pix'];
+            $id = $icon['component'] . ':' . $icon['pix'];
             if ($data === $id) {
                 $found = true;
                 break;
@@ -92,7 +96,7 @@ class iconselect extends \admin_setting {
         $html .= \html_writer::start_tag('div', ['style' => 'max-width: 390px']);
         $selected = (!empty($data)) ? $data : $this->defaultsetting;
         foreach ($this->choices as $icon) {
-            $id = $icon['component'].':'.$icon['pix'];
+            $id = $icon['component'] . ':' . $icon['pix'];
             $iconhtml = $OUTPUT->image_icon($icon['pix'], $icon['alt'], $icon['component']);
             $inputattrs = [
                 'type' => 'radio',
@@ -107,7 +111,7 @@ class iconselect extends \admin_setting {
             }
             $html .= \html_writer::empty_tag('input', $inputattrs);
             $labelattrs = [
-                'class' => 'iconselect'
+                'class' => 'iconselect',
             ];
             $html .= \html_writer::label($iconhtml, $id, true, $labelattrs);
         }
