@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Authcode login flow.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
