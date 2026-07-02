@@ -15,8 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Admin setting for login flow.
- *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,8 +22,6 @@
  */
 
 namespace auth_azureb2c\form\adminsetting;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Displays the redirect URI for easier config.
@@ -74,18 +70,18 @@ class loginflow extends \admin_setting {
 
         foreach ($this->flowtypes as $flowtype) {
             $html .= \html_writer::start_div();
-            $flowtypeid = $baseid . '_' . $flowtype;
+            $flowtypeid = $baseid.'_'.$flowtype;
             $radioattrs = [
                 'type' => 'radio',
                 'name' => $inputname,
                 'id' => $flowtypeid,
-                'value' => $flowtype,
+                'value' => $flowtype
             ];
             if ($data === $flowtype || (empty($data) && $flowtype === $this->get_defaultsetting())) {
                 $radioattrs['checked'] = 'checked';
             }
-            $typename = get_string('cfg_loginflow_' . $flowtype, 'auth_azureb2c');
-            $typedesc = get_string('cfg_loginflow_' . $flowtype . '_desc', 'auth_azureb2c');
+            $typename = get_string('cfg_loginflow_'.$flowtype, 'auth_azureb2c');
+            $typedesc = get_string('cfg_loginflow_'.$flowtype.'_desc', 'auth_azureb2c');
             $html .= \html_writer::empty_tag('input', $radioattrs);
             $html .= \html_writer::label($typename, $flowtypeid, false);
             $html .= '<br />';

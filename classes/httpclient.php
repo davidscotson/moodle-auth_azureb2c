@@ -15,8 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * HTTP client for auth_azureb2c.
- *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,9 +23,7 @@
 
 namespace auth_azureb2c;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/lib/filelib.php');
+require_once($CFG->dirroot.'/lib/filelib.php');
 
 /**
  * Implementation of \auth_azureb2c\httpclientinterface using Moodle CURL.
@@ -36,7 +32,7 @@ class httpclient extends \curl implements \auth_azureb2c\httpclientinterface {
     /**
      * Generate a client tag.
      *
-     * @return string[] A client tag.
+     * @return string A client tag.
      */
     protected function get_clienttag_headers() {
         global $CFG;
@@ -51,8 +47,8 @@ class httpclient extends \curl implements \auth_azureb2c\httpclientinterface {
         $params = "lang=PHP; os={$ostype}; os_version={$osver}; arch={$arch}; version={$ver}; MoodleInstallId={$iid}";
         $clienttag = "Moodle/{$mdlver} ({$params})";
         return [
-            'User-Agent: ' . $clienttag,
-            'X-ClientService-ClientTag: ' . $clienttag,
+            'User-Agent: '.$clienttag,
+            'X-ClientService-ClientTag: '.$clienttag,
         ];
     }
 
@@ -63,8 +59,8 @@ class httpclient extends \curl implements \auth_azureb2c\httpclientinterface {
      */
     protected function get_plugin_version() {
         global $CFG;
-        $plugin = new \stdClass();
-        require_once($CFG->dirroot . '/auth/azureb2c/version.php');
+        $plugin = new \stdClass;
+        require_once($CFG->dirroot.'/auth/azureb2c/version.php');
         return (isset($plugin->release)) ? $plugin->release : 'unknown';
     }
 

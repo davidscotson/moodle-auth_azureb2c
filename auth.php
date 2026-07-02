@@ -29,7 +29,7 @@ require_once($CFG->libdir . '/authlib.php');
 require_once($CFG->dirroot . '/login/lib.php');
 
 /**
- * Azure AD B2C Connect Authentication Plugin.
+ * Azure AD B2C Connect Authentication Plugin class.
  */
 class auth_plugin_azureb2c extends \auth_plugin_base {
     /** @var string Authentication plugin type - the same as db field. */
@@ -87,16 +87,9 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
      * @param \auth_azureb2c\httpclientinterface $httpclient An HTTP client to use.
      */
     public function set_httpclient(\auth_azureb2c\httpclientinterface $httpclient) {
-        return $this->loginflow->set_httpclient($httpclient);
+        $this->loginflow->set_httpclient($httpclient);
     }
 
-    /**
-     * Hook for overriding behaviour of login page.
-     * This method is called from login/index.php page for all enabled auth plugins.
-     *
-     * @global object
-     * @global object
-     */
     /**
      * Hook for overriding behaviour of login page.
      * This method is called from login/index.php page for all enabled auth plugins.
@@ -117,15 +110,6 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
         return $this->loginflow->handleredirect();
     }
 
-    /**
-     * Handle azureb2c disconnection from Moodle account.
-     *
-     * @param bool $justremovetokens If true, just remove the stored azureb2c tokens for the user, otherwise revert login methods.
-     * @param bool $donotremovetokens If true, do not remove tokens when disconnecting. This migrates from a login account to a
-     *                                "linked" account.
-     * @param \moodle_url $redirect Where to redirect if successful.
-     * @param \moodle_url $selfurl The page this is accessed from. Used for some redirects.
-     */
     /**
      * Handle azureb2c disconnection from Moodle account.
      *
@@ -216,8 +200,8 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
                     $tokenrec = $updatedtokenrec;
                 }
             } else {
-                // There should always be a token record here, so a failure here means
-                // the user's token record doesn't yet contain their userid.
+                // There should always be a token record here, so a failure here means.
+                // The user's token record doesn't yet contain their userid.
                 $tokenrec = $DB->get_record('auth_azureb2c_token', ['username' => $username]);
                 if (!empty($tokenrec)) {
                     $tokenrec->userid = $user->id;
