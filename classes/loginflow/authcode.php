@@ -23,6 +23,8 @@
 
 namespace auth_azureb2c\loginflow;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Login flow for the oauth2 authorization code grant.
  */
@@ -208,7 +210,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
         $orignonce = $staterec->nonce;
         $additionaldata = [];
         if (!empty($staterec->additionaldata)) {
-            $additionaldata = @unserialize($staterec->additionaldata);
+            $additionaldata = @unserialize($staterec->additionaldata, ['allowed_classes' => false]);
             if (!is_array($additionaldata)) {
                 $additionaldata = [];
             }
@@ -381,7 +383,8 @@ class authcode extends \auth_azureb2c\loginflow\base {
     /**
      * Determines whether the given Azure AD UPN is already matched to a Moodle user (and has not been completed).
      *
-     * @return false|stdClass Either the matched Moodle user record, or false if not matched.
+     * @param string $entraidupn The Entra ID UPN.
+     * @return false|\stdClass Either the matched Moodle user record, or false if not matched.
      */
     protected function check_for_matched($entraidupn) {
         global $DB;
