@@ -103,6 +103,8 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
      * Test setting and getting endpoints.
      *
      * @dataProvider dataprovider_endpoints
+     * @param array $endpoints The endpoints to set.
+     * @param array $expectedexception The expected exception.
      */
     public function test_endpoints_getters_and_setters($endpoints, $expectedexception): void {
         if (!empty($expectedexception)) {

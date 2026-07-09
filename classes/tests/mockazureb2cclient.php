@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Mock Azure AD B2C client.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,6 +25,8 @@
 
 namespace auth_azureb2c\tests;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * A mock azureb2cclient class providing access to all inaccessible properties/methods.
  */
@@ -30,11 +34,18 @@ class mockazureb2cclient extends \auth_azureb2c\azureb2cclient {
     /** @var \auth_azureb2c\httpclientinterface An HTTP client to use. */
     public $httpclient;
 
+    /** @var string The resource. */
+    public $resource;
+
     /** @var array Array of endpoints. */
     public $endpoints = [];
 
     /**
      * Stub method to access protected parent method.
+     *
+     * @param string $nonce The nonce.
+     * @param array $stateparams The state parameters.
+     * @return string The new state.
      */
     public function getnewstate($nonce, array $stateparams = array()) {
         return parent::getnewstate($nonce, $stateparams);
