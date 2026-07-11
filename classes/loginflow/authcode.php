@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Authorization Code login flow file.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,6 +24,8 @@
  */
 
 namespace auth_azureb2c\loginflow;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Login flow for the oauth2 authorization code grant.
@@ -170,7 +174,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
      * @param array $authparams Received parameters.
      */
     protected function handleauthresponse(array $authparams) {
-        global $DB, $CFG, $STATEADDITIONALDATA, $USER;
+        global $DB, $CFG, $stateadditionaldata, $USER;
 
         if (!empty($authparams['error_description'])) {
             // AADB2C90091 user cancel error code
@@ -208,12 +212,12 @@ class authcode extends \auth_azureb2c\loginflow\base {
         $orignonce = $staterec->nonce;
         $additionaldata = [];
         if (!empty($staterec->additionaldata)) {
-            $additionaldata = @unserialize($staterec->additionaldata);
+            $additionaldata = @unserialize($staterec->additionaldata, ['allowed_classes' => false]);
             if (!is_array($additionaldata)) {
                 $additionaldata = [];
             }
         }
-        $STATEADDITIONALDATA = $additionaldata;
+        $stateadditionaldata = $additionaldata;
         $DB->delete_records('auth_azureb2c_state', ['id' => $staterec->id]);
 
         // Get token from auth code.

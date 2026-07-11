@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Main auth plugin file.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -40,14 +42,16 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
     public $loginflow;
 
     /**
-     * Constructor.
+     * auth_plugin_azureb2c constructor.
+     *
+     * @param string $forceloginflow Force a specific login flow.
      */
     public function __construct($forceloginflow = null) {
-        global $STATEADDITIONALDATA;
+        global $stateadditionaldata;
         $loginflow = 'authcode';
 
-        if (!empty($STATEADDITIONALDATA) && isset($STATEADDITIONALDATA['forceflow'])) {
-            $loginflow = $STATEADDITIONALDATA['forceflow'];
+        if (!empty($stateadditionaldata) && isset($stateadditionaldata['forceflow'])) {
+            $loginflow = $stateadditionaldata['forceflow'];
         } else {
             if (!empty($forceloginflow) && is_string($forceloginflow)) {
                 $loginflow = $forceloginflow;
@@ -80,7 +84,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
     /**
      * Set an HTTP client to use.
      *
-     * @param auth_azureb2chttpclientinterface $httpclient [description]
+     * @param \auth_azureb2c\httpclientinterface $httpclient The HTTP client.
      */
     public function set_httpclient(\auth_azureb2c\httpclientinterface $httpclient) {
         return $this->loginflow->set_httpclient($httpclient);
@@ -109,13 +113,13 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
     }
 
     /**
-     * Handle azureb2c disconnection from Moodle account.
+     * Disconnect from Azure B2C.
      *
-     * @param bool $justremovetokens If true, just remove the stored azureb2c tokens for the user, otherwise revert login methods.
-     * @param bool $donotremovetokens If true, do not remove tokens when disconnecting. This migrates from a login account to a
-     *                                "linked" account.
-     * @param \moodle_url $redirect Where to redirect if successful.
-     * @param \moodle_url $selfurl The page this is accessed from. Used for some redirects.
+     * @param bool $justremovetokens Just remove tokens.
+     * @param bool $donotremovetokens Do not remove tokens.
+     * @param \moodle_url $redirect Redirect URL.
+     * @param \moodle_url $selfurl Self URL.
+     * @param int $userid User ID.
      */
     public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
                                \moodle_url $selfurl = null, $userid = null) {

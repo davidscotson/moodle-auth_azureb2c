@@ -30,6 +30,7 @@ global $CFG;
  *
  * @group auth_azureb2c
  * @group office365
+ * @covers \auth_azureb2c\jwt
  */
 class auth_azureb2c_jwt_testcase extends \advanced_testcase {
     /**
@@ -110,6 +111,9 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
      * Test decode.
      *
      * @dataProvider dataprovider_decode
+     * @param string $encodedjwt The encoded JWT.
+     * @param mixed $expectedresult The expected result.
+     * @param array $expectedexception The expected exception.
      */
     public function test_decode($encodedjwt, $expectedresult, $expectedexception): void {
         if (!empty($expectedexception)) {
