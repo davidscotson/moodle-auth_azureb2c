@@ -23,6 +23,8 @@
 
 namespace auth_azureb2c\loginflow;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Login flow for the oauth2 authorization code grant.
  */
@@ -208,7 +210,8 @@ class authcode extends \auth_azureb2c\loginflow\base {
         $orignonce = $staterec->nonce;
         $additionaldata = [];
         if (!empty($staterec->additionaldata)) {
-            $additionaldata = @unserialize($staterec->additionaldata);
+            // Security: Harden unserialize by disabling class instantiation to prevent PHP Object Injection.
+            $additionaldata = @unserialize($staterec->additionaldata, ['allowed_classes' => false]);
             if (!is_array($additionaldata)) {
                 $additionaldata = [];
             }
