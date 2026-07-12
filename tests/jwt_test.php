@@ -21,7 +21,6 @@
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
-defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
@@ -30,6 +29,7 @@ global $CFG;
  *
  * @group auth_azureb2c
  * @group office365
+ * @coversDefaultClass \auth_azureb2c\jwt
  */
 class auth_azureb2c_jwt_testcase extends \advanced_testcase {
     /**
@@ -45,7 +45,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_decode(): array {
+    public static function dataprovider_decode(): array {
         $tests = [];
 
         $tests['emptytest'] = [
@@ -82,6 +82,11 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
             $header.'.p.s', '', ['Exception', 'JWS Alg or JWE not supported']
         ];
 
+        $header = base64_encode(json_encode(['alg' => 'none']));
+        $tests['nonealg'] = [
+            $header.'.p.s', '', ['Exception', 'JWS Alg or JWE not supported']
+        ];
+
         $header = base64_encode(json_encode(['alg' => 'RS256']));
         $payload = 'p';
         $tests['badpayload1'] = [
@@ -109,6 +114,9 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
     /**
      * Test decode.
      *
+     * @param string $encodedjwt The encoded JWT.
+     * @param array $expectedresult Expected decode result.
+     * @param array $expectedexception Expected exception.
      * @dataProvider dataprovider_decode
      */
     public function test_decode($encodedjwt, $expectedresult, $expectedexception): void {

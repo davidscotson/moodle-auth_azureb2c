@@ -21,7 +21,6 @@
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
-defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
@@ -30,6 +29,7 @@ global $CFG;
  *
  * @group auth_azureb2c
  * @group office365
+ * @coversDefaultClass \auth_azureb2c\azureb2cclient
  */
 class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
     /**
@@ -68,7 +68,7 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_endpoints(): array {
+    public static function dataprovider_endpoints(): array {
         $tests = [];
 
         $tests['oneinvalid'] = [
@@ -102,6 +102,8 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
     /**
      * Test setting and getting endpoints.
      *
+     * @param array $endpoints Endpoints to set.
+     * @param array $expectedexception Expected exception.
      * @dataProvider dataprovider_endpoints
      */
     public function test_endpoints_getters_and_setters($endpoints, $expectedexception): void {

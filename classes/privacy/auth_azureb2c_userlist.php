@@ -15,17 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Redirect handler for Azure AD B2C Connect plugin.
+ * Interface auth_azureb2c_userlist.
  *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
-require_once(__DIR__ . '/../../config.php');
-require_once(__DIR__ . '/auth.php');
+namespace auth_azureb2c\privacy;
 
-$auth = new \auth_plugin_azureb2c('authcode');
-$auth->set_httpclient(new \auth_azureb2c\httpclient());
-$auth->handleredirect();
+defined('MOODLE_INTERNAL') || die();
+
+if (interface_exists('\core_privacy\local\request\core_userlist_provider')) {
+    /**
+     * Interface auth_azureb2c_userlist.
+     */
+    interface auth_azureb2c_userlist extends \core_privacy\local\request\core_userlist_provider {
+    }
+} else {
+    /**
+     * Interface auth_azureb2c_userlist.
+     */
+    interface auth_azureb2c_userlist {
+    }
+}
