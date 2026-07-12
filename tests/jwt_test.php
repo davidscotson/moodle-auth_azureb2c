@@ -21,7 +21,6 @@
  * @copyright (C) 2020 Gopal Sharma <gopalsharma66@gmail.com>
  */
 
-defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
@@ -30,6 +29,7 @@ global $CFG;
  *
  * @group auth_azureb2c
  * @group office365
+ * @coversDefaultClass \auth_azureb2c\jwt
  */
 class auth_azureb2c_jwt_testcase extends \advanced_testcase {
     /**
@@ -45,7 +45,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_decode(): array {
+    public static function dataprovider_decode(): array {
         $tests = [];
 
         $tests['emptytest'] = [

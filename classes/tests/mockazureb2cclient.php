@@ -30,6 +30,9 @@ class mockazureb2cclient extends \auth_azureb2c\azureb2cclient {
     /** @var \auth_azureb2c\httpclientinterface An HTTP client to use. */
     public $httpclient;
 
+    /** @var string The resource URI. */
+    public $resource;
+
     /** @var array Array of endpoints. */
     public $endpoints = [];
 
