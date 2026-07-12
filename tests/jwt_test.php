@@ -114,6 +114,9 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
     /**
      * Test decode.
      *
+     * @param string $encodedjwt The encoded JWT.
+     * @param array $expectedresult Expected decode result.
+     * @param array $expectedexception Expected exception.
      * @dataProvider dataprovider_decode
      */
     public function test_decode($encodedjwt, $expectedresult, $expectedexception): void {
