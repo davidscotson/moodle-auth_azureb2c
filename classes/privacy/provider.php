@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Azure AD B2C Connect Authentication Plugin.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,21 +25,22 @@
 
 namespace auth_azureb2c\privacy;
 
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\contextlist;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\writer;
+defined('MOODLE_INTERNAL') || die();
 
-if (interface_exists('\core_privacy\local\request\core_userlist_provider')) {
-    interface auth_azureb2c_userlist extends \core_privacy\local\request\core_userlist_provider {}
-} else {
-    interface auth_azureb2c_userlist {};
-}
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\writer;
 
+/**
+ * Privacy provider.
+ *
+ * @package auth_azureb2c
+ */
 class provider implements
-    \core_privacy\local\request\plugin\provider,
     \core_privacy\local\metadata\provider,
-    auth_azureb2c_userlist {
+    \core_privacy\local\request\core_userlist_provider,
+    \core_privacy\local\request\plugin\provider {
 
     /**
      * Returns meta data about this system.
@@ -71,12 +74,12 @@ class provider implements
         foreach ($tables as $table => $fields) {
             $fielddata = [];
             foreach ($fields as $field) {
-                $fielddata[$field] = 'privacy:metadata:'.$table.':'.$field;
+                $fielddata[$field] = 'privacy:metadata:' . $table . ':' . $field;
             }
             $collection->add_database_table(
                 $table,
                 $fielddata,
-                'privacy:metadata:'.$table
+                'privacy:metadata:' . $table
             );
         }
 
@@ -89,7 +92,7 @@ class provider implements
      * @param   int         $userid     The user to search.
      * @return  contextlist   $contextlist  The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new \core_privacy\local\request\contextlist();
 
         $sql = "SELECT ctx.id
@@ -112,7 +115,7 @@ class provider implements
     /**
      * Get the list of users who have data within a context.
      *
-     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     * @param \core_privacy\local\request\userlist $userlist The userlist containing the list of users who have data in context.
      */
     public static function get_users_in_context(\core_privacy\local\request\userlist $userlist) {
         $context = $userlist->get_context();
@@ -123,7 +126,7 @@ class provider implements
 
         $params = [
             'contextuser' => CONTEXT_USER,
-            'contextid' => $context->id
+            'contextid' => $context->id,
         ];
 
         $sql = "SELECT ctx.instanceid as userid
@@ -158,7 +161,7 @@ class provider implements
             foreach ($records as $record) {
                 writer::with_context($context)->export_data([
                     get_string('privacy:metadata:auth_azureb2c', 'auth_azureb2c'),
-                    get_string('privacy:metadata:'.$table, 'auth_azureb2c')
+                    get_string('privacy:metadata:' . $table, 'auth_azureb2c'),
                 ], $record);
             }
         }
@@ -181,7 +184,7 @@ class provider implements
     /**
      * Delete all data for all users in the specified context.
      *
-     * @param context $context The specific context to delete data for.
+     * @param \context $context The specific context to delete data for.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         if ($context->contextlevel == CONTEXT_USER) {
@@ -219,8 +222,7 @@ class provider implements
     /**
      * Delete multiple users within a single context.
      *
-     * @param \core_privacy\local\request\approved_userlist $userlist The approved context and user information to delete
-     * information for.
+     * @param \core_privacy\local\request\approved_userlist $userlist The approved context and user information to delete.
      */
     public static function delete_data_for_users(\core_privacy\local\request\approved_userlist $userlist) {
         $context = $userlist->get_context();

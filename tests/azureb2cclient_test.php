@@ -28,6 +28,9 @@ global $CFG;
 /**
  * Tests azureb2cclient.
  *
+ * @package auth_azureb2c
+ * @category test
+ * @covers \auth_azureb2c\azureb2cclient
  * @group auth_azureb2c
  * @group office365
  */
@@ -102,6 +105,8 @@ class auth_azureb2c_azureb2cclient_testcase extends \advanced_testcase {
     /**
      * Test setting and getting endpoints.
      *
+     * @param array $endpoints The endpoints.
+     * @param array $expectedexception The expected exception.
      * @dataProvider dataprovider_endpoints
      */
     public function test_endpoints_getters_and_setters($endpoints, $expectedexception): void {

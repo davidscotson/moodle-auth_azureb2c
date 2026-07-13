@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Azure AD B2C Connect Authentication Plugin.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,6 +24,8 @@
  */
 
 namespace auth_azureb2c;
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/lib/filelib.php');
 
@@ -57,10 +61,15 @@ class httpclient extends \curl implements \auth_azureb2c\httpclientinterface {
      *
      * @return string The current plugin version.
      */
+    /**
+     * Get the current plugin version.
+     *
+     * @return string
+     */
     protected function get_plugin_version() {
         global $CFG;
-        $plugin = new \stdClass;
-        require_once($CFG->dirroot.'/auth/azureb2c/version.php');
+        $plugin = new \stdClass();
+        require_once($CFG->dirroot . '/auth/azureb2c/version.php');
         return (isset($plugin->release)) ? $plugin->release : 'unknown';
     }
 

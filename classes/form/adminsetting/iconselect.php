@@ -23,6 +23,8 @@
 
 namespace auth_azureb2c\form\adminsetting;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Choose an icon for the identity provider entry on the login page.
  */
