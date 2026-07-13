@@ -26,8 +26,11 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 /**
- * Tests jwt
+ * Tests jwt.
  *
+ * @package auth_azureb2c
+ * @category test
+ * @covers \auth_azureb2c\jwt
  * @group auth_azureb2c
  * @group office365
  */
@@ -109,6 +112,9 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
     /**
      * Test decode.
      *
+     * @param string $encodedjwt The encoded JWT.
+     * @param array $expectedresult The expected result.
+     * @param array $expectedexception The expected exception.
      * @dataProvider dataprovider_decode
      */
     public function test_decode($encodedjwt, $expectedresult, $expectedexception): void {

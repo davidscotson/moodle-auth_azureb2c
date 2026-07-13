@@ -23,6 +23,8 @@
 
 namespace auth_azureb2c\form\adminsetting;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Displays the redirect URI for easier config.
  */
