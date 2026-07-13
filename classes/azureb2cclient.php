@@ -171,7 +171,7 @@ class azureb2cclient {
      */
     protected function getnewstate($nonce, array $stateparams = array()) {
         global $DB;
-        $staterec = new \stdClass;
+        $staterec = new \stdClass();
         $staterec->sesskey = sesskey();
         $staterec->state = random_string(15);
         $staterec->nonce = $nonce;
