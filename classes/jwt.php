@@ -23,6 +23,8 @@
 
 namespace auth_azureb2c;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Class for working with JWTs.
  */
@@ -60,7 +62,8 @@ class jwt {
             throw new \moodle_exception('errorjwtinvalidheader', 'auth_azureb2c');
         }
 
-        $jwsalgs = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'none'];
+        // Whitelist of supported algorithms. 'none' is explicitly excluded to prevent signature bypass.
+        $jwsalgs = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512'];
         if (in_array($header['alg'], $jwsalgs, true) === true) {
             $body = static::decode_jws($jwtparts);
         } else {
