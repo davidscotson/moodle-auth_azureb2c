@@ -41,13 +41,15 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
 
     /**
      * Constructor.
+     *
+     * @param string|null $forceloginflow Force a specific login flow.
      */
     public function __construct($forceloginflow = null) {
-        global $STATEADDITIONALDATA;
+        global $stateadditionaldata;
         $loginflow = 'authcode';
 
-        if (!empty($STATEADDITIONALDATA) && isset($STATEADDITIONALDATA['forceflow'])) {
-            $loginflow = $STATEADDITIONALDATA['forceflow'];
+        if (!empty($stateadditionaldata) && isset($stateadditionaldata['forceflow'])) {
+            $loginflow = $stateadditionaldata['forceflow'];
         } else {
             if (!empty($forceloginflow) && is_string($forceloginflow)) {
                 $loginflow = $forceloginflow;
@@ -80,7 +82,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
     /**
      * Set an HTTP client to use.
      *
-     * @param auth_azureb2chttpclientinterface $httpclient [description]
+     * @param \auth_azureb2c\httpclientinterface $httpclient The HTTP client to use.
      */
     public function set_httpclient(\auth_azureb2c\httpclientinterface $httpclient) {
         return $this->loginflow->set_httpclient($httpclient);
