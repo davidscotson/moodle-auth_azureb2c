@@ -23,8 +23,6 @@
 
 namespace auth_azureb2c;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Azure AD B2C Connect Client
  */
@@ -164,7 +162,6 @@ class azureb2cclient {
      * Generate a new state parameter.
      *
      * @param string $nonce The generated nonce value.
-     * @param array $stateparams Parameters to store as state.
      * @return string The new state value.
      */
     protected function getnewstate($nonce, array $stateparams = array()) {
@@ -239,6 +236,7 @@ class azureb2cclient {
     /**
      * Exchange an authorization code for an access token.
      *
+     * @param string $tokenendpoint The token endpoint URI.
      * @param string $code An authorization code.
      * @return array Received parameters.
      */
