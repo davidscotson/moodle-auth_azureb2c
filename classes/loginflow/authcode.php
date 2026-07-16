@@ -208,7 +208,8 @@ class authcode extends \auth_azureb2c\loginflow\base {
         $orignonce = $staterec->nonce;
         $additionaldata = [];
         if (!empty($staterec->additionaldata)) {
-            $additionaldata = @unserialize($staterec->additionaldata);
+            // Prevent PHP Object Injection by ensuring no classes are allowed to be instantiated during deserialization.
+            $additionaldata = @unserialize($staterec->additionaldata, ['allowed_classes' => false]);
             if (!is_array($additionaldata)) {
                 $additionaldata = [];
             }
