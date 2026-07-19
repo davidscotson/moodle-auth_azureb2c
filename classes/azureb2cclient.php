@@ -62,7 +62,7 @@ class azureb2cclient {
      * @param string $redirecturi The registered client redirect URI.
      * @param string $resource The resource to use.
      */
-    public function setcreds($id, $secret, $redirecturi, $resource) {
+    public function setcreds($id, $secret, $redirecturi, $resource = null) {
         $this->clientid = $id;
         $this->clientsecret = $secret;
         $this->redirecturi = $redirecturi;
