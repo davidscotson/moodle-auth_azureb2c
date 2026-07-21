@@ -1,0 +1,4 @@
+## 2026-07-21 - JWT Signature Bypass via 'none' Algorithm and PHP Object Injection via unserialize
+**Vulnerability:** The JWT library whitelisted the 'none' signature algorithm, which could allow signature validation bypass if signature checks were performed. Additionally, oauth2 state additionaldata unserialization did not restrict class instantiation.
+**Learning:** JWT standard supports the 'none' algorithm by design, but in production authentication integrations, allowing 'none' can lead to serious signature bypasses. Standard PHP unserialize allows executing arbitrary class magic methods like __wakeup or __destruct if classes are loaded.
+**Prevention:** Always disable the 'none' algorithm in JWT signature validation libraries. Always use ['allowed_classes' => false] when unserializing dynamic data from external sources or database fields populated via request state parameters.
