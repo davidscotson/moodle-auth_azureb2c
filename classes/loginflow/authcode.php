@@ -23,8 +23,6 @@
 
 namespace auth_azureb2c\loginflow;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Login flow for the oauth2 authorization code grant.
  */
