@@ -39,7 +39,8 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
     /**
      * Tests set up.
      */
-    public function setUp(): void {
+    protected function setUp(): void {
+        parent::setUp();
         global $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();
