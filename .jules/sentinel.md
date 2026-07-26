@@ -1,0 +1,4 @@
+## 2026-07-26 - Harden JWT Verification and PHP Unserialization
+**Vulnerability:** JWT signature bypass via 'none' algorithm confusion, and potential PHP Object Injection via unserialization of untrusted state data.
+**Learning:** Insecure default whitelist of JWT algorithms included 'none', allowing signature check bypass. Also, `unserialize` on stored B2C state records did not restrict object instantiation, exposing the application to PHP Object Injection if an attacker could control the serialized state.
+**Prevention:** Always remove the 'none' algorithm from supported JWT lists unless explicitly intended and securely authenticated otherwise. Always configure PHP's `unserialize()` with `['allowed_classes' => false]` when handling any data that could be influenced by untrusted or external parties.
