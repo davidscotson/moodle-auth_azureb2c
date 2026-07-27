@@ -1,0 +1,4 @@
+## 2026-07-27 - JWT 'none' Algorithm and PHP Insecure Deserialization Hardening
+**Vulnerability:** JWT signature bypass via the 'none' algorithm and PHP Object Injection via unhardened `unserialize()`.
+**Learning:** In Moodle third-party OAuth2/B2C authentication plugins, JWT headers are decoded and validated. Allowing the 'none' algorithm allows malicious actors to forge arbitrary JWT payloads without providing a valid signature, bypassing identity validation entirely. Additionally, database fields storing temporary state or session-like additional data must not be deserialized using insecure standard `unserialize()`, as this can execute arbitrary object destructors if class loading is permitted.
+**Prevention:** Remove 'none' from the whitelisted JWT algorithms. Always use `['allowed_classes' => false]` in PHP's `unserialize()` when deserializing data that could be influenced by external payloads, such as the authorization code state.
