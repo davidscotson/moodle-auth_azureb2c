@@ -33,6 +33,9 @@ class mockazureb2cclient extends \auth_azureb2c\azureb2cclient {
     /** @var array Array of endpoints. */
     public $endpoints = [];
 
+    /** @var string|null The resource. */
+    public $resource = null;
+
     /**
      * Stub method to access protected parent method.
      */
