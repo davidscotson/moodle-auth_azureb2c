@@ -1,0 +1,4 @@
+## 2026-03-06 - [Critical Security Learnings]
+**Vulnerability:** Weak security validation of `none` algorithm inside JWT decoding class `classes/jwt.php` and insecure PHP deserialization vulnerability inside authcode redirect handling `classes/loginflow/authcode.php`.
+**Learning:** `jwt::decode` allows 'none' as a valid JWS algorithm signature, which could facilitate authentication bypass/confusion when using unverified JWT strings. Additionally, the `unserialize()` call on `additionaldata` inside `classes/loginflow/authcode.php` can lead to PHP Object Injection vulnerability if the data gets manipulated.
+**Prevention:** Remove 'none' from the `$jwsalgs` list in `classes/jwt.php`, or fail explicitly if `none` is specified. Harden `unserialize` by passing `['allowed_classes' => false]` to prevent class instantiation during PHP object deserialization.
