@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Tests for JSON Web Token processing.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,10 +28,11 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 /**
- * Tests jwt
+ * Tests jwt.
  *
  * @group auth_azureb2c
  * @group office365
+ * @covers \auth_azureb2c\jwt
  */
 class auth_azureb2c_jwt_testcase extends \advanced_testcase {
     /**
@@ -82,6 +85,11 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
             $header.'.p.s', '', ['Exception', 'JWS Alg or JWE not supported']
         ];
 
+        $header = base64_encode(json_encode(['alg' => 'none']));
+        $tests['nonealg'] = [
+            $header.'.p.s', '', ['Exception', 'JWS Alg or JWE not supported']
+        ];
+
         $header = base64_encode(json_encode(['alg' => 'RS256']));
         $payload = 'p';
         $tests['badpayload1'] = [
@@ -110,6 +118,9 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
      * Test decode.
      *
      * @dataProvider dataprovider_decode
+     * @param string|int $encodedjwt
+     * @param array|string $expectedresult
+     * @param array $expectedexception
      */
     public function test_decode($encodedjwt, $expectedresult, $expectedexception): void {
         if (!empty($expectedexception)) {
