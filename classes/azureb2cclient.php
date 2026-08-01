@@ -39,6 +39,9 @@ class azureb2cclient {
     /** @var string The client redirect URI. */
     protected $redirecturi;
 
+    /** @var string The resource. */
+    protected $resource;
+
     /** @var array Array of endpoints. */
     protected $endpoints = [];
 
