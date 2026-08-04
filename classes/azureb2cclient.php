@@ -42,6 +42,9 @@ class azureb2cclient {
     /** @var array Array of endpoints. */
     protected $endpoints = [];
 
+    /** @var string The resource to access (e.g. graph.windows.net) */
+    public $resource;
+
     /**
      * Constructor.
      *
