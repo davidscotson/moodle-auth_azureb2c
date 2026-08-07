@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * JWT helper class for Azure AD B2C Connect plugin.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,7 +29,6 @@ namespace auth_azureb2c;
  * Class for working with JWTs.
  */
 class jwt {
-
     /** @var array Array of JWT header parameters. */
     protected $header = [];
 
@@ -60,7 +61,7 @@ class jwt {
             throw new \moodle_exception('errorjwtinvalidheader', 'auth_azureb2c');
         }
 
-        $jwsalgs = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'none'];
+        $jwsalgs = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512'];
         if (in_array($header['alg'], $jwsalgs, true) === true) {
             $body = static::decode_jws($jwtparts);
         } else {
@@ -96,8 +97,8 @@ class jwt {
      * @return \auth_azureb2c\jwt A JWT instance.
      */
     public static function instance_from_encoded($encoded) {
-        list($header, $body) = static::decode($encoded);
-        $jwt = new static;
+        [$header, $body] = static::decode($encoded);
+        $jwt = new static();
         $jwt->set_header($header);
         $jwt->set_claims($body);
         return $jwt;
