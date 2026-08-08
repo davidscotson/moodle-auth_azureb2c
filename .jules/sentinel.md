@@ -1,0 +1,4 @@
+## 2025-05-15 - [JWT Algorithm Bypass & PHP Object Injection]
+**Vulnerability:** The application whitelisted the `'none'` algorithm for JWT decoding and unserialized state's additionaldata without specifying `'allowed_classes' => false`.
+**Learning:** Whitelisting `'none'` in JWT libraries allows signature bypass since signature verification is bypassed if the token specifies the `'none'` algorithm. Deserializing untrusted/user-influenced data via `unserialize()` without restricting class instantiation exposes the system to PHP Object Injection and potential Remote Code Execution (RCE).
+**Prevention:** Always remove `'none'` from JWT algorithm whitelists in production. Always pass `['allowed_classes' => false]` when unserializing state/user-influenced data unless instantiation is explicitly required and trusted.
