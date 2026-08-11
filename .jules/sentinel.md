@@ -1,0 +1,4 @@
+## 2026-08-11 - [Harden JWT validation and State Deserialization]
+**Vulnerability:** Whitelisted the insecure 'none' JWS algorithm which would allow attackers to bypass JWT signature verification by constructing unsigned id_tokens. Furthermore, state data deserialization used unhardened `unserialize()`, creating a potential path for PHP Object Injection.
+**Learning:** Whitelisting 'none' in the JWT decoding library presents a critical signature bypass risk. Using `unserialize()` without `['allowed_classes' => false]` allows malicious actors to execute arbitrary code if they can manipulate the serialized state.
+**Prevention:** Avoid whitelisting 'none' algorithm unless strictly necessary and verified through a secure channel. Always pass `['allowed_classes' => false]` to `unserialize()` to prevent PHP Object Injection attacks unless class hydration is explicitly desired and verified.
