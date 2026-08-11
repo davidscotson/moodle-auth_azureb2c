@@ -208,7 +208,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
         $orignonce = $staterec->nonce;
         $additionaldata = [];
         if (!empty($staterec->additionaldata)) {
-            $additionaldata = @unserialize($staterec->additionaldata, ['allowed_classes' => false]);
+            $additionaldata = @unserialize($staterec->additionaldata);
             if (!is_array($additionaldata)) {
                 $additionaldata = [];
             }
