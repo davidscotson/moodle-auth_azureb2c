@@ -30,6 +30,7 @@ global $CFG;
  *
  * @group auth_azureb2c
  * @group office365
+ * @covers \auth_azureb2c\jwt
  */
 class auth_azureb2c_jwt_testcase extends \advanced_testcase {
     /**
