@@ -48,7 +48,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_decode(): array {
+    public static function dataprovider_decode(): array {
         $tests = [];
 
         $tests['emptytest'] = [
