@@ -48,58 +48,58 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_decode(): array {
+    public static function dataprovider_decode(): array {
         $tests = [];
 
         $tests['emptytest'] = [
-            '', '', ['Exception', 'Empty or non-string JWT received.']
+            '', '', ['Exception', 'Empty or non-string JWT received.'],
         ];
 
         $tests['nonstringtest'] = [
-            100, '', ['Exception', 'Empty or non-string JWT received.']
+            100, '', ['Exception', 'Empty or non-string JWT received.'],
         ];
 
         $tests['malformed1'] = [
-            'a', '', ['Exception', 'Malformed JWT received.']
+            'a', '', ['Exception', 'Malformed JWT received.'],
         ];
 
         $tests['malformed2'] = [
-            'a.b', '', ['Exception', 'Malformed JWT received.']
+            'a.b', '', ['Exception', 'Malformed JWT received.'],
         ];
 
         $tests['malformed3'] = [
-            'a.b.c.d', '', ['Exception', 'Malformed JWT received.']
+            'a.b.c.d', '', ['Exception', 'Malformed JWT received.'],
         ];
 
         $tests['badheader1'] = [
-            'h.p.s', '', ['Exception', 'Could not read JWT header']
+            'h.p.s', '', ['Exception', 'Could not read JWT header'],
         ];
 
         $header = base64_encode(json_encode(['key' => 'val']));
         $tests['invalidheader1'] = [
-            $header.'.p.s', '', ['Exception', 'Invalid JWT header']
+            $header . '.p.s', '', ['Exception', 'Invalid JWT header'],
         ];
 
         $header = base64_encode(json_encode(['alg' => 'ROT13']));
         $tests['badalg1'] = [
-            $header.'.p.s', '', ['Exception', 'JWS Alg or JWE not supported']
+            $header . '.p.s', '', ['Exception', 'JWS Alg or JWE not supported'],
         ];
 
         $header = base64_encode(json_encode(['alg' => 'none']));
         $tests['nonealg'] = [
-            $header.'.p.s', '', ['Exception', 'JWS Alg or JWE not supported']
+            $header . '.p.s', '', ['Exception', 'JWS Alg or JWE not supported'],
         ];
 
         $header = base64_encode(json_encode(['alg' => 'RS256']));
         $payload = 'p';
         $tests['badpayload1'] = [
-            $header.'.'.$payload.'.s', '', ['Exception', 'Could not read JWT payload.']
+            $header . '.' . $payload . '.s', '', ['Exception', 'Could not read JWT payload.'],
         ];
 
         $header = base64_encode(json_encode(['alg' => 'RS256']));
         $payload = base64_encode('nothing');
         $tests['badpayload2'] = [
-            $header.'.'.$payload.'.s', '', ['Exception', 'Could not read JWT payload.']
+            $header . '.' . $payload . '.s', '', ['Exception', 'Could not read JWT payload.'],
         ];
 
         $header = ['alg' => 'RS256'];
@@ -108,7 +108,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
         $payloadenc = base64_encode(json_encode($payload));
         $expected = [$header, $payload];
         $tests['goodpayload1'] = [
-            $headerenc.'.'.$payloadenc.'.s', $expected, []
+            $headerenc . '.' . $payloadenc . '.s', $expected, [],
         ];
 
         return $tests;
@@ -118,7 +118,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
      * Test decode.
      *
      * @dataProvider dataprovider_decode
-     * @param string $encodedjwt The encoded JWT.
+     * @param string|int $encodedjwt The encoded JWT.
      * @param array|string $expectedresult The expected decoded result.
      * @param array $expectedexception The expected exception if any.
      */
@@ -129,6 +129,5 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
         }
         $actualresult = \auth_azureb2c\jwt::decode($encodedjwt);
         $this->assertEquals($expectedresult, $actualresult);
-
     }
 }
