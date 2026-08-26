@@ -87,7 +87,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
 
         $header = base64_encode(json_encode(['alg' => 'none']));
         $tests['nonealg'] = [
-            $header.'.p.s', '', ['Exception', 'JWS Alg or JWE not supported']
+            $header . '.p.s', '', ['Exception', 'JWS Alg or JWE not supported'],
         ];
 
         $header = base64_encode(json_encode(['alg' => 'RS256']));
@@ -129,6 +129,5 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
         }
         $actualresult = \auth_azureb2c\jwt::decode($encodedjwt);
         $this->assertEquals($expectedresult, $actualresult);
-
     }
 }
