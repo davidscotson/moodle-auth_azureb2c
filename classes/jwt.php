@@ -60,7 +60,8 @@ class jwt {
             throw new \moodle_exception('errorjwtinvalidheader', 'auth_azureb2c');
         }
 
-        $jwsalgs = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'none'];
+        // Whitelist JWS algorithms; 'none' is removed to prevent JWT signature bypass.
+        $jwsalgs = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512'];
         if (in_array($header['alg'], $jwsalgs, true) === true) {
             $body = static::decode_jws($jwtparts);
         } else {
@@ -96,8 +97,8 @@ class jwt {
      * @return \auth_azureb2c\jwt A JWT instance.
      */
     public static function instance_from_encoded($encoded) {
-        list($header, $body) = static::decode($encoded);
-        $jwt = new static;
+        [$header, $body] = static::decode($encoded);
+        $jwt = new static();
         $jwt->set_header($header);
         $jwt->set_claims($body);
         return $jwt;
