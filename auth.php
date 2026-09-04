@@ -43,11 +43,11 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
      * Constructor.
      */
     public function __construct($forceloginflow = null) {
-        global $STATEADDITIONALDATA;
+        global $stateadditionaldata;
         $loginflow = 'authcode';
 
-        if (!empty($STATEADDITIONALDATA) && isset($STATEADDITIONALDATA['forceflow'])) {
-            $loginflow = $STATEADDITIONALDATA['forceflow'];
+        if (!empty($stateadditionaldata) && isset($stateadditionaldata['forceflow'])) {
+            $loginflow = $stateadditionaldata['forceflow'];
         } else {
             if (!empty($forceloginflow) && is_string($forceloginflow)) {
                 $loginflow = $forceloginflow;
