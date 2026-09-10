@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class for working with JWTs.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,7 +29,6 @@ namespace auth_azureb2c;
  * Class for working with JWTs.
  */
 class jwt {
-
     /** @var array Array of JWT header parameters. */
     protected $header = [];
 
@@ -60,7 +61,7 @@ class jwt {
             throw new \moodle_exception('errorjwtinvalidheader', 'auth_azureb2c');
         }
 
-        // Do not allow 'none' algorithm to prevent JWT signature bypass vulnerabilities.
+        // Whitelist JWS algorithms; 'none' is removed to prevent JWT signature bypass.
         $jwsalgs = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512'];
         if (in_array($header['alg'], $jwsalgs, true) === true) {
             $body = static::decode_jws($jwtparts);
