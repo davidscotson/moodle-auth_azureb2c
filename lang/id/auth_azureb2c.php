@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Language strings for auth_azureb2c (Indonesian).
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -89,7 +91,6 @@ $string['errorauthdisconnectusernameexists'] = 'That username is already taken. 
 $string['errorauthdisconnectnewmethod'] = 'Use Login Method';
 $string['errorauthdisconnectinvalidmethod'] = 'Invalid login method received.';
 $string['errorauthdisconnectifmanual'] = 'If using the manual login method, enter credentials below.';
-$string['errorauthdisconnectinvalidmethod'] = 'Invalid login method received.';
 $string['errorauthgeneral'] = 'There was a problem logging you in. Please contact your administrator for assistance.';
 $string['errorauthinvalididtoken'] = 'Invalid id_token received.';
 $string['errorauthloginfailednouser'] = 'Invalid login: User not found in Moodle. If this site has the "authpreventaccountcreation" setting enabled, this may mean you need an administrator to create an account for you first.';
