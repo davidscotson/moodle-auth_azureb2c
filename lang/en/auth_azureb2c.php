@@ -94,7 +94,6 @@ $string['errorauthdisconnectusernameexists'] = 'That username is already taken. 
 $string['errorauthdisconnectnewmethod'] = 'Use Login Method';
 $string['errorauthdisconnectinvalidmethod'] = 'Invalid login method received.';
 $string['errorauthdisconnectifmanual'] = 'If using the manual login method, enter credentials below.';
-$string['errorauthdisconnectinvalidmethod'] = 'Invalid login method received.';
 $string['errorauthgeneral'] = 'There was a problem logging you in. Please contact your administrator for assistance.';
 $string['errorauthinvalididtoken'] = 'Invalid id_token received.';
 $string['errorauthloginfaileddupemail'] = 'Invalid login: Your account has the same email address as another user on this Moodle, duplicate email addresses are blocked.';
