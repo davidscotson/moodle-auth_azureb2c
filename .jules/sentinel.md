@@ -1,4 +1,4 @@
-## 2025-05-21 - JWT Signature Bypass via Unsigned Algorithm Whitelisting
-**Vulnerability:** The `jwt::decode` method included `'none'` in its `$jwsalgs` whitelist array, permitting unsigned JWT tokens to bypass signature verification.
-**Learning:** Hardcoded algorithm whitelists in custom JWT implementation classes can inadvertently include insecure algorithms like `'none'`, leading to authentication bypass.
-**Prevention:** Strictly omit `'none'` from algorithm whitelists and enforce cryptographic signature validation on all decoded JWS tokens.
+## 2025-05-15 - JWT None Algorithm and Unserialize Hardening
+**Vulnerability:** JWT signature bypass via the 'none' algorithm and PHP Object Injection via insecure unserialization of state records.
+**Learning:** The 'none' algorithm allowed token verification bypass since no signature check is performed, and PHP unserialize without restricting classes allowed arbitrary object instantiation.
+**Prevention:** Whitelist only strong JWS algorithms in JWT parsing and specify 'allowed_classes => false' when deserializing state parameters to secure the authentication flow.
