@@ -48,7 +48,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public static function dataprovider_decode(): array {
+    public function dataprovider_decode(): array {
         $tests = [];
 
         $tests['emptytest'] = [
@@ -108,7 +108,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
         $payloadenc = base64_encode(json_encode($payload));
         $expected = [$header, $payload];
         $tests['goodpayload1'] = [
-            $headerenc.'.'.$payloadenc.'.s', $expected, [],
+            $headerenc.'.'.$payloadenc.'.s', $expected, []
         ];
 
         return $tests;
@@ -129,5 +129,6 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
         }
         $actualresult = \auth_azureb2c\jwt::decode($encodedjwt);
         $this->assertEquals($expectedresult, $actualresult);
+
     }
 }
