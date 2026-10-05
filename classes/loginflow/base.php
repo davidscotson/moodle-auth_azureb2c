@@ -75,8 +75,8 @@ class base {
     /**
      * Provides a hook into the login page.
      *
-     * @param object $frm Form object.
-     * @param object $user User object.
+     * @param object &$frm Form object.
+     * @param object &$user User object.
      */
     public function loginpage_hook(&$frm, &$user) {
         return true;
@@ -190,7 +190,7 @@ class base {
     /**
      * Set an HTTP client to use.
      *
-     * @param \auth_azureb2c\httpclientinterface $httpclient HTTP client interface.
+     * @param auth_azureb2chttpclientinterface $httpclient [description]
      */
     public function set_httpclient(\auth_azureb2c\httpclientinterface $httpclient) {
         $this->httpclient = $httpclient;
@@ -204,7 +204,6 @@ class base {
      *                                "linked" account.
      * @param \moodle_url $redirect Where to redirect if successful.
      * @param \moodle_url $selfurl The page this is accessed from. Used for some redirects.
-     * @param int|null $userid The user ID.
      */
     public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
                                \moodle_url $selfurl = null, $userid = null) {
@@ -484,7 +483,6 @@ class base {
      * @param array $authparams Parameters receieved from the auth request.
      * @param array $tokenparams Parameters received from the token request.
      * @param \auth_azureb2c\jwt $idtoken A JWT object representing the received id_token.
-     * @param int $userid User ID.
      * @return \stdClass The created token database record.
      */
     protected function createtoken($azureb2cuniqid, $username, $authparams, $tokenparams, \auth_azureb2c\jwt $idtoken, $userid = 0) {
