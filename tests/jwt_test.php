@@ -45,7 +45,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_decode(): array {
+    public static function dataprovider_decode(): array {
         $tests = [];
 
         $tests['emptytest'] = [
@@ -109,7 +109,11 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
     /**
      * Test decode.
      *
+     * @param string $encodedjwt Encoded JWT string.
+     * @param mixed $expectedresult Expected decode result array.
+     * @param array $expectedexception Expected exception array if any.
      * @dataProvider dataprovider_decode
+     * @covers \auth_azureb2c\jwt::decode
      */
     public function test_decode($encodedjwt, $expectedresult, $expectedexception): void {
         if (!empty($expectedexception)) {
@@ -118,6 +122,5 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
         }
         $actualresult = \auth_azureb2c\jwt::decode($encodedjwt);
         $this->assertEquals($expectedresult, $actualresult);
-
     }
 }
