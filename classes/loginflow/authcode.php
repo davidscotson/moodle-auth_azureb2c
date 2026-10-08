@@ -172,7 +172,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
      * @param array $authparams Received parameters.
      */
     protected function handleauthresponse(array $authparams) {
-        global $DB, $CFG, $stateadditionaldata, $USER;
+        global $DB, $CFG, $STATEADDITIONALDATA, $USER;
 
         if (!empty($authparams['error_description'])) {
             // AADB2C90091 user cancel error code
@@ -216,7 +216,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
                 $additionaldata = [];
             }
         }
-        $stateadditionaldata = $additionaldata;
+        $STATEADDITIONALDATA = $additionaldata;
         $DB->delete_records('auth_azureb2c_state', ['id' => $staterec->id]);
 
         // Get token from auth code.
@@ -384,8 +384,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
     /**
      * Determines whether the given Azure AD UPN is already matched to a Moodle user (and has not been completed).
      *
-     * @param string $entraidupn Entra ID UPN parameter.
-     * @return false|\stdClass Either the matched Moodle user record, or false if not matched.
+     * @return false|stdClass Either the matched Moodle user record, or false if not matched.
      */
     protected function check_for_matched($entraidupn) {
         global $DB;
