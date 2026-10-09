@@ -87,19 +87,25 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
 
         $header = base64_encode(json_encode(['alg' => 'none']));
         $tests['nonealg'] = [
-            $header.'.p.s', '', ['Exception', 'JWS Alg or JWE not supported']
+            $header . '.p.s',
+            '',
+            ['Exception', 'JWS Alg or JWE not supported'],
         ];
 
         $header = base64_encode(json_encode(['alg' => 'RS256']));
         $payload = 'p';
         $tests['badpayload1'] = [
-            $header.'.'.$payload.'.s', '', ['Exception', 'Could not read JWT payload.']
+            $header . '.' . $payload . '.s',
+            '',
+            ['Exception', 'Could not read JWT payload.'],
         ];
 
         $header = base64_encode(json_encode(['alg' => 'RS256']));
         $payload = base64_encode('nothing');
         $tests['badpayload2'] = [
-            $header.'.'.$payload.'.s', '', ['Exception', 'Could not read JWT payload.']
+            $header . '.' . $payload . '.s',
+            '',
+            ['Exception', 'Could not read JWT payload.'],
         ];
 
         $header = ['alg' => 'RS256'];
@@ -108,7 +114,9 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
         $payloadenc = base64_encode(json_encode($payload));
         $expected = [$header, $payload];
         $tests['goodpayload1'] = [
-            $headerenc.'.'.$payloadenc.'.s', $expected, []
+            $headerenc . '.' . $payloadenc . '.s',
+            $expected,
+            [],
         ];
 
         return $tests;
@@ -118,6 +126,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
      * Test decode.
      *
      * @dataProvider dataprovider_decode
+     * @covers \auth_azureb2c\jwt::decode
      * @param string $encodedjwt The encoded JWT.
      * @param array|string $expectedresult The expected decoded result.
      * @param array $expectedexception The expected exception if any.
@@ -129,6 +138,5 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
         }
         $actualresult = \auth_azureb2c\jwt::decode($encodedjwt);
         $this->assertEquals($expectedresult, $actualresult);
-
     }
 }
