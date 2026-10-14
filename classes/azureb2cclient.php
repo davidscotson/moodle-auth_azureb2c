@@ -39,6 +39,9 @@ class azureb2cclient {
     /** @var string The client redirect URI. */
     protected $redirecturi;
 
+    /** @var string The resource URI. */
+    public $resource;
+
     /** @var array Array of endpoints. */
     protected $endpoints = [];
 
@@ -58,7 +61,7 @@ class azureb2cclient {
      * @param string $secret The registered client secret.
      * @param string $redirecturi The registered client redirect URI.
      */
-    public function setcreds($id, $secret, $redirecturi, $resource) {
+    public function setcreds($id, $secret, $redirecturi, $resource = null) {
         $this->clientid = $id;
         $this->clientsecret = $secret;
         $this->redirecturi = $redirecturi;

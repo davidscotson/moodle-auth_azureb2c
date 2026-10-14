@@ -114,6 +114,10 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
     /**
      * Test decode.
      *
+     * @param string $encodedjwt
+     * @param array|string $expectedresult
+     * @param array $expectedexception
+     * @covers \auth_azureb2c\jwt::decode
      * @dataProvider dataprovider_decode
      */
     public function test_decode($encodedjwt, $expectedresult, $expectedexception): void {
