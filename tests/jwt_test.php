@@ -82,6 +82,11 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
             $header.'.p.s', '', ['Exception', 'JWS Alg or JWE not supported']
         ];
 
+        $header = base64_encode(json_encode(['alg' => 'none']));
+        $tests['nonealg1'] = [
+            $header.'.p.s', '', ['Exception', 'JWS Alg or JWE not supported']
+        ];
+
         $header = base64_encode(json_encode(['alg' => 'RS256']));
         $payload = 'p';
         $tests['badpayload1'] = [
@@ -109,6 +114,9 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
     /**
      * Test decode.
      *
+     * @param string $encodedjwt Encoded JWT string.
+     * @param mixed $expectedresult Expected result array or empty string.
+     * @param array $expectedexception Expected exception class and message.
      * @dataProvider dataprovider_decode
      */
     public function test_decode($encodedjwt, $expectedresult, $expectedexception): void {
