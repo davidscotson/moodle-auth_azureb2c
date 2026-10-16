@@ -15,8 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tests for JWT class.
- *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -117,10 +115,11 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
     /**
      * Test decode.
      *
+     * @covers \auth_azureb2c\jwt::decode
      * @dataProvider dataprovider_decode
-     * @param string $encodedjwt The encoded JWT.
+     * @param string|int $encodedjwt The encoded JWT to decode.
      * @param array|string $expectedresult The expected decoded result.
-     * @param array $expectedexception The expected exception if any.
+     * @param array $expectedexception The expected exception and message.
      */
     public function test_decode($encodedjwt, $expectedresult, $expectedexception): void {
         if (!empty($expectedexception)) {

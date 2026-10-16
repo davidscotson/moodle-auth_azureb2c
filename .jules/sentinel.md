@@ -1,4 +1,4 @@
-## 2025-05-15 - JWT None Algorithm and Unserialize Hardening
-**Vulnerability:** JWT signature bypass via the 'none' algorithm and PHP Object Injection via insecure unserialization of state records.
-**Learning:** The 'none' algorithm allowed token verification bypass since no signature check is performed, and PHP unserialize without restricting classes allowed arbitrary object instantiation.
-**Prevention:** Whitelist only strong JWS algorithms in JWT parsing and specify 'allowed_classes => false' when deserializing state parameters to secure the authentication flow.
+## 2026-03-06 - JWT Algorithm Bypass & PHP Object Injection
+**Vulnerability:** The application whitelisted the 'none' algorithm for JWT decoding and unserialized state's additionaldata without specifying 'allowed_classes' => false.
+**Learning:** Whitelisting 'none' in JWT decoding libraries allows signature bypass since signature verification is bypassed if the token specifies the 'none' algorithm. Deserializing untrusted or user-influenced data via unserialize() without restricting class instantiation exposes the system to PHP Object Injection and potential Remote Code Execution (RCE).
+**Prevention:** Always remove 'none' from JWT algorithm whitelists in production. Always pass ['allowed_classes' => false] when unserializing state or user-influenced data unless instantiation is explicitly required and trusted.
