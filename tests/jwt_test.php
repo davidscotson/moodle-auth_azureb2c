@@ -45,7 +45,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
      *
      * @return array Array of arrays of test parameters.
      */
-    public function dataprovider_decode(): array {
+    public static function dataprovider_decode(): array {
         $tests = [];
 
         $tests['emptytest'] = [
@@ -84,7 +84,7 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
 
         $header = base64_encode(json_encode(['alg' => 'none']));
         $tests['nonealg'] = [
-            $header.'.p.s', '', ['Exception', 'JWS Alg or JWE not supported']
+            $header . '.p.s', '', ['Exception', 'JWS Alg or JWE not supported'],
         ];
 
         $header = base64_encode(json_encode(['alg' => 'RS256']));
@@ -114,6 +114,10 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
     /**
      * Test decode.
      *
+     * @param string $encodedjwt
+     * @param array $expectedresult
+     * @param array $expectedexception
+     * @covers \auth_azureb2c\jwt::decode
      * @dataProvider dataprovider_decode
      */
     public function test_decode($encodedjwt, $expectedresult, $expectedexception): void {
@@ -123,6 +127,5 @@ class auth_azureb2c_jwt_testcase extends \advanced_testcase {
         }
         $actualresult = \auth_azureb2c\jwt::decode($encodedjwt);
         $this->assertEquals($expectedresult, $actualresult);
-
     }
 }
