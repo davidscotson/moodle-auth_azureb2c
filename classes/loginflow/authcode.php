@@ -15,8 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Authorization code login flow class.
- *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -172,7 +170,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
      * @param array $authparams Received parameters.
      */
     protected function handleauthresponse(array $authparams) {
-        global $DB, $CFG, $stateadditionaldata, $USER;
+        global $DB, $CFG, $STATEADDITIONALDATA, $USER;
 
         if (!empty($authparams['error_description'])) {
             // AADB2C90091 user cancel error code
@@ -210,13 +208,12 @@ class authcode extends \auth_azureb2c\loginflow\base {
         $orignonce = $staterec->nonce;
         $additionaldata = [];
         if (!empty($staterec->additionaldata)) {
-            // Specify allowed_classes as false to prevent PHP Object Injection.
-            $additionaldata = @unserialize($staterec->additionaldata, ['allowed_classes' => false]);
+            $additionaldata = @unserialize($staterec->additionaldata);
             if (!is_array($additionaldata)) {
                 $additionaldata = [];
             }
         }
-        $stateadditionaldata = $additionaldata;
+        $STATEADDITIONALDATA = $additionaldata;
         $DB->delete_records('auth_azureb2c_state', ['id' => $staterec->id]);
 
         // Get token from auth code.
@@ -384,8 +381,7 @@ class authcode extends \auth_azureb2c\loginflow\base {
     /**
      * Determines whether the given Azure AD UPN is already matched to a Moodle user (and has not been completed).
      *
-     * @param string $entraidupn Entra ID UPN parameter.
-     * @return false|\stdClass Either the matched Moodle user record, or false if not matched.
+     * @return false|stdClass Either the matched Moodle user record, or false if not matched.
      */
     protected function check_for_matched($entraidupn) {
         global $DB;

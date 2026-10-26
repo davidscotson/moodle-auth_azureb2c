@@ -15,8 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Azure AD B2C Connect Authentication Plugin file.
- *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -43,15 +41,13 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
 
     /**
      * Constructor.
-     *
-     * @param string|null $forceloginflow Forced login flow.
      */
     public function __construct($forceloginflow = null) {
-        global $stateadditionaldata;
+        global $STATEADDITIONALDATA;
         $loginflow = 'authcode';
 
-        if (!empty($stateadditionaldata) && isset($stateadditionaldata['forceflow'])) {
-            $loginflow = $stateadditionaldata['forceflow'];
+        if (!empty($STATEADDITIONALDATA) && isset($STATEADDITIONALDATA['forceflow'])) {
+            $loginflow = $STATEADDITIONALDATA['forceflow'];
         } else {
             if (!empty($forceloginflow) && is_string($forceloginflow)) {
                 $loginflow = $forceloginflow;
@@ -84,7 +80,7 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
     /**
      * Set an HTTP client to use.
      *
-     * @param \auth_azureb2c\httpclientinterface $httpclient HTTP client interface.
+     * @param auth_azureb2chttpclientinterface $httpclient [description]
      */
     public function set_httpclient(\auth_azureb2c\httpclientinterface $httpclient) {
         return $this->loginflow->set_httpclient($httpclient);
@@ -120,7 +116,6 @@ class auth_plugin_azureb2c extends \auth_plugin_base {
      *                                "linked" account.
      * @param \moodle_url $redirect Where to redirect if successful.
      * @param \moodle_url $selfurl The page this is accessed from. Used for some redirects.
-     * @param int|null $userid The user ID.
      */
     public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
                                \moodle_url $selfurl = null, $userid = null) {
