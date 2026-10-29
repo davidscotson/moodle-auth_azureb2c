@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy test for auth_azureb2c
+ * Privacy test for auth_azureb2c.
  *
  * @package auth_azureb2c
  * @author Remote-Learner.net Inc
@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use \auth_azureb2c\privacy\provider;
+use auth_azureb2c\privacy\provider;
 
 /**
  * Privacy test for auth_azureb2c
@@ -47,6 +47,8 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
 
     /**
      * Check that a user context is returned if there is any user data for this user.
+     *
+     * @covers \auth_azureb2c\privacy\provider::get_contexts_for_userid
      */
     public function test_get_contexts_for_userid(): void {
         $user = $this->getDataGenerator()->create_user();
@@ -67,6 +69,8 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
 
     /**
      * Test that only users with a user context are fetched.
+     *
+     * @covers \auth_azureb2c\privacy\provider::get_users_in_context
      */
     public function test_get_users_in_context(): void {
         $this->resetAfterTest();
@@ -100,6 +104,8 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
 
     /**
      * Test that user data is exported correctly.
+     *
+     * @covers \auth_azureb2c\privacy\provider::export_user_data
      */
     public function test_export_user_data(): void {
         // Create a user record.
@@ -116,14 +122,14 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
         // Token.
         $data = $writer->get_data([
             get_string('privacy:metadata:auth_azureb2c', 'auth_azureb2c'),
-            get_string('privacy:metadata:auth_azureb2c_token', 'auth_azureb2c')
+            get_string('privacy:metadata:auth_azureb2c_token', 'auth_azureb2c'),
         ]);
         $this->assertEquals($tokenrecord->userid, $data->userid);
         $this->assertEquals($tokenrecord->token, $data->token);
         // Previous login.
         $data = $writer->get_data([
             get_string('privacy:metadata:auth_azureb2c', 'auth_azureb2c'),
-            get_string('privacy:metadata:auth_azureb2c_prevlogin', 'auth_azureb2c')
+            get_string('privacy:metadata:auth_azureb2c_prevlogin', 'auth_azureb2c'),
         ]);
         $this->assertEquals($prevloginrecord->userid, $data->userid);
         $this->assertEquals($prevloginrecord->method, $data->method);
@@ -132,6 +138,8 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
 
     /**
      * Test deleting all user data for a specific context.
+     *
+     * @covers \auth_azureb2c\privacy\provider::delete_data_for_all_users_in_context
      */
     public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
@@ -163,6 +171,8 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
 
     /**
      * This should work identical to the above test.
+     *
+     * @covers \auth_azureb2c\privacy\provider::delete_data_for_user
      */
     public function test_delete_data_for_user(): void {
         global $DB;
@@ -195,6 +205,8 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
 
     /**
      * Test that data for users in approved userlist is deleted.
+     *
+     * @covers \auth_azureb2c\privacy\provider::delete_data_for_users
      */
     public function test_delete_data_for_users(): void {
         $this->resetAfterTest();
@@ -262,7 +274,7 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
      * @return stdClass
      * @throws dml_exception
      */
-    static private function create_token(int $userid): \stdClass {
+    private static function create_token(int $userid): \stdClass {
         global $DB;
         $record = new stdClass();
         $record->azureb2cuniqid = "user@example.com";
@@ -287,7 +299,7 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
      * @return stdClass
      * @throws dml_exception
      */
-    static private function create_prevlogin(int $userid): \stdClass {
+    private static function create_prevlogin(int $userid): \stdClass {
         global $DB;
         $record = new stdClass();
         $record->userid = $userid;
@@ -296,5 +308,4 @@ class auth_azureb2c_privacy_testcase extends \core_privacy\tests\provider_testca
         $record->id = $DB->insert_record('auth_azureb2c_prevlogin', $record);
         return $record;
     }
-
 }
