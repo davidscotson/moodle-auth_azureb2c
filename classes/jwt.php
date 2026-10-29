@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class for working with JWTs in auth_azureb2c.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,7 +29,6 @@ namespace auth_azureb2c;
  * Class for working with JWTs.
  */
 class jwt {
-
     /** @var array Array of JWT header parameters. */
     protected $header = [];
 
@@ -97,7 +98,7 @@ class jwt {
      * @return \auth_azureb2c\jwt A JWT instance.
      */
     public static function instance_from_encoded($encoded) {
-        list($header, $body) = static::decode($encoded);
+        [$header, $body] = static::decode($encoded);
         $jwt = new static();
         $jwt->set_header($header);
         $jwt->set_claims($body);
