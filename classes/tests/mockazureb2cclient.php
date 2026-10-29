@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Mock azureb2c client for unit tests.
+ *
  * @package auth_azureb2c
  * @author Gopal Sharma <gopalsharma66@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -36,7 +38,7 @@ class mockazureb2cclient extends \auth_azureb2c\azureb2cclient {
     /**
      * Stub method to access protected parent method.
      */
-    public function getnewstate($nonce, array $stateparams = array()) {
+    public function getnewstate($nonce, array $stateparams = []) {
         return parent::getnewstate($nonce, $stateparams);
     }
 
@@ -48,7 +50,7 @@ class mockazureb2cclient extends \auth_azureb2c\azureb2cclient {
      * @param array $extraparams Additional parameters to send with the azureb2c request.
      * @return array Array of request parameters.
      */
-    public function getauthrequestparams($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
+    public function getauthrequestparams($promptlogin = false, array $stateparams = [], array $extraparams = []) {
         return parent::getauthrequestparams($promptlogin, $stateparams);
     }
 }
