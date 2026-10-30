@@ -35,6 +35,7 @@ $azureb2cconnected = (!empty($azureb2ctoken)) ? true : false;
 $azureb2cloginconnected = ($USER->auth === 'azureb2c') ? true : false;
 
 if (!empty($action)) {
+    require_sesskey();
     if ($action === 'connectlogin' && $azureb2cloginconnected === false) {
         // Use authorization request login flow to connect existing users.
         if (!is_enabled_auth('azureb2c')) {
@@ -85,7 +86,10 @@ if (!empty($action)) {
         echo \html_writer::tag('h4', get_string('ucp_status_enabled', 'auth_azureb2c'), ['class' => 'notifysuccess']);
         if (is_enabled_auth('manual') === true) {
             if (auth_azureb2c_connectioncapability($USER->id, 'disconnect')) {
-                $connectlinkuri = new \moodle_url('/auth/azureb2c/ucp.php', ['action' => 'disconnectlogin']);
+                $connectlinkuri = new \moodle_url('/auth/azureb2c/ucp.php', [
+                    'action' => 'disconnectlogin',
+                    'sesskey' => sesskey(),
+                ]);
                 $strdisconnect = get_string('ucp_login_stop', 'auth_azureb2c', $opname);
                 $linkhtml = \html_writer::link($connectlinkuri, $strdisconnect);
                 echo \html_writer::tag('h5', $linkhtml);
@@ -95,7 +99,10 @@ if (!empty($action)) {
     } else {
         echo \html_writer::tag('h4', get_string('ucp_status_disabled', 'auth_azureb2c'), ['class' => 'notifyproblem']);
         if (auth_azureb2c_connectioncapability($USER->id, 'connect')) {
-            $connectlinkuri = new \moodle_url('/auth/azureb2c/ucp.php', ['action' => 'connectlogin']);
+            $connectlinkuri = new \moodle_url('/auth/azureb2c/ucp.php', [
+                'action' => 'connectlogin',
+                'sesskey' => sesskey(),
+            ]);
             $linkhtml = \html_writer::link($connectlinkuri, get_string('ucp_login_start', 'auth_azureb2c', $opname));
             echo \html_writer::tag('h5', $linkhtml);
             echo \html_writer::span(get_string('ucp_login_start_desc', 'auth_azureb2c', $opname));
