@@ -1,4 +1,4 @@
-## 2026-05-30 - CSRF Protection in User Control Panel
-**Vulnerability:** State-changing actions (`connectlogin` and `disconnectlogin`) in `ucp.php` lacked CSRF protection (`require_sesskey()`), allowing an attacker to forge requests causing users to connect or disconnect their Azure B2C login.
-**Learning:** Legacy endpoints directly processing GET parameters like `action` need explicit CSRF protection via `require_sesskey()`, and corresponding action links must supply `'sesskey' => sesskey()`.
-**Prevention:** Always ensure any state-changing web action validates Moodle's session key via `require_sesskey()`.
+## 2025-05-15 - JWT None Algorithm and Unserialize Hardening
+**Vulnerability:** JWT signature bypass via the 'none' algorithm and PHP Object Injection via insecure unserialization of state records.
+**Learning:** The 'none' algorithm allowed token verification bypass since no signature check is performed, and PHP unserialize without restricting classes allowed arbitrary object instantiation.
+**Prevention:** Whitelist only strong JWS algorithms in JWT parsing and specify 'allowed_classes => false' when deserializing state parameters to secure the authentication flow.
