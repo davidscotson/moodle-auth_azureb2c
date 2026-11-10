@@ -1,4 +1,4 @@
-## 2025-05-15 - JWT None Algorithm and Unserialize Hardening
-**Vulnerability:** JWT signature bypass via the 'none' algorithm and PHP Object Injection via insecure unserialization of state records.
-**Learning:** The 'none' algorithm allowed token verification bypass since no signature check is performed, and PHP unserialize without restricting classes allowed arbitrary object instantiation.
-**Prevention:** Whitelist only strong JWS algorithms in JWT parsing and specify 'allowed_classes => false' when deserializing state parameters to secure the authentication flow.
+## 2025-05-14 - [HIGH] Insecure Unserialize Hardening
+**Vulnerability:** Insecure use of PHP `unserialize()` on database-stored state data in `classes/loginflow/authcode.php`.
+**Learning:** Data stored in the `auth_azureb2c_state` table was being deserialized without restricting allowed classes, potentially allowing PHP Object Injection if an attacker could influence the state data (e.g., via a previous step in the flow or database access).
+**Prevention:** Always pass `['allowed_classes' => false]` to `unserialize()` when the expected data type is a primitive or an array, especially when dealing with data that could be influenced by external sources.
